@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Trip 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Viaje a Manhattan</p>
+        <h1>NYC Trip 2026</h1>
+      </div>
+      <div class="header-tag">Halloween Edition</div>
+    </header>
+
+    <main class="app-main">
+      <section id="home" class="screen active-screen">
+        <div class="hero-card">
+          <div class="hero-text">
+            <p class="label">30 Oct - 06 Nov • The Gregorian New York City</p>
+            <h2>Preparando tu viaje</h2>
+            <p class="hero-subtitle">Todo listo para disfrutar Nueva York de forma libre, urbana y con un toque Halloween.</p>
+          </div>
+          <div class="hero-badge">#NYC2026</div>
+        </div>
+
+        <div class="section-grid">
+          <article class="card card-highlight">
+            <div>
+              <p class="card-eyebrow">Halloween en NYC</p>
+              <h3>Experiencias nocturnas y luces</h3>
+              <p>Busca eventos, recorridos libres y spots para sentir el espíritu de la ciudad en Halloween.</p>
+            </div>
+            <span class="accent">🎃</span>
+          </article>
+
+          <article class="card card-counter">
+            <p class="card-eyebrow">Cuenta regresiva</p>
+            <div class="countdown-grid" id="countdownGrid">
+              <div><strong id="countDays">--</strong><span>Días</span></div>
+              <div><strong id="countHours">--</strong><span>Horas</span></div>
+              <div><strong id="countMinutes">--</strong><span>Minutos</span></div>
+            </div>
+            <p id="countdownStatus" class="status-text">Cargando contador...</p>
+          </article>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-label">Días restantes</span>
+            <strong id="statRemaining">--</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total viaje</span>
+            <strong id="statTotalDays">--</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total gastado</span>
+            <strong id="statTotalSpent">--</strong>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card dark">
+            <span class="stat-label">Pendientes</span>
+            <strong id="statPending">--</strong>
+          </div>
+          <div class="stat-card dark">
+            <span class="stat-label">Visitados</span>
+            <strong id="statVisited">--</strong>
+          </div>
+        </div>
+
+        <section class="card transport-card">
+          <div>
+            <p class="card-eyebrow">Desde JFK al hotel</p>
+            <h3>Transporte público + OMNY</h3>
+            <p>Usa el subte / metro y paga con OMNY en tarjeta contactless, celular o smartwatch.</p>
+          </div>
+          <div class="transport-actions">
+            <a href="https://www.google.com/maps/dir/JFK+Airport,+Queens,+NY/The+Gregorian+New+York+City,+225+E+39th+St,+New+York,+NY+10016" target="_blank" rel="noopener noreferrer">Ruta al hotel</a>
+            <a href="https://www.google.com/maps/search/OMNY+MTA+metro+station" target="_blank" rel="noopener noreferrer">Buscar OMNY</a>
+          </div>
+          <p class="note-text">Revisar la ruta actualizada al llegar, porque los recorridos pueden cambiar según horario, mantenimiento o demoras.</p>
+        </section>
+
+        <section class="card quick-links-card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Links rápidos</p>
+              <h3>Accesos directos</h3>
+            </div>
+            <span>🔗</span>
+          </div>
+          <div class="link-grid">
+            <a href="https://www.google.com/maps/search/The+Gregorian+New+York+City" target="_blank" rel="noopener noreferrer">Hotel</a>
+            <a href="https://www.google.com/maps/dir/JFK+Airport,+Queens,+NY/The+Gregorian+New+York+City,+NY" target="_blank" rel="noopener noreferrer">JFK → Hotel</a>
+            <a href="https://omny.info/" target="_blank" rel="noopener noreferrer">OMNY / MTA</a>
+            <a href="https://www.google.com/maps/search/Times+Square" target="_blank" rel="noopener noreferrer">Times Square</a>
+            <a href="https://www.google.com/maps/search/Central+Park" target="_blank" rel="noopener noreferrer">Central Park</a>
+            <a href="https://www.google.com/maps/search/Brooklyn" target="_blank" rel="noopener noreferrer">Brooklyn</a>
+            <a href="https://www.google.com/maps/search/Edge+Hudson+Yards" target="_blank" rel="noopener noreferrer">Edge</a>
+            <a href="https://www.google.com/maps/search/Rockefeller+Center" target="_blank" rel="noopener noreferrer">Rockefeller</a>
+          </div>
+        </section>
+      </section>
+
+      <section id="places" class="screen">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Checklist</p>
+            <h2>Lugares para visitar</h2>
+          </div>
+          <span>🗺️</span>
+        </div>
+
+        <article class="card">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="placeName">Nuevo lugar</label>
+              <input id="placeName" type="text" placeholder="Agregar lugar" autocomplete="off" />
+            </div>
+            <div class="input-group small">
+              <label for="placeCategory">Categoría</label>
+              <select id="placeCategory">
+                <option value="Otro">Otro</option>
+                <option value="Manhattan">Manhattan</option>
+                <option value="Brooklyn">Brooklyn</option>
+                <option value="New Jersey">New Jersey</option>
+                <option value="Mirador">Mirador</option>
+                <option value="Parque">Parque</option>
+                <option value="Halloween">Halloween</option>
+              </select>
+            </div>
+            <button id="addPlaceBtn" class="primary-btn">Agregar</button>
+          </div>
+        </article>
+
+        <article class="card progress-card">
+          <div>
+            <p class="card-eyebrow">Progreso</p>
+            <strong id="placeProgressText">0 de 0 lugares visitados</strong>
+          </div>
+          <div class="progress-bar"><div id="placeProgressFill"></div></div>
+        </article>
+
+        <div id="placesList" class="list-stack"></div>
+      </section>
+
+      <section id="expenses" class="screen">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Finanzas</p>
+            <h2>Gastos del viaje</h2>
+          </div>
+          <span>💳</span>
+        </div>
+
+        <article class="card">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="expenseDate">Fecha</label>
+              <input id="expenseDate" type="date" />
+            </div>
+            <div class="input-group">
+              <label for="expenseConcept">Concepto</label>
+              <input id="expenseConcept" type="text" placeholder="Comida, transporte..." />
+            </div>
+            <div class="input-group">
+              <label for="expenseCategory">Categoría</label>
+              <select id="expenseCategory">
+                <option value="Comida">Comida</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Compras">Compras</option>
+                <option value="Entradas / atracciones">Entradas / atracciones</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Vuelos">Vuelos</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="expenseAmount">Monto</label>
+              <input id="expenseAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="input-group">
+              <label for="expenseCurrency">Moneda</label>
+              <select id="expenseCurrency">
+                <option value="USD">USD</option>
+                <option value="ARS">ARS</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="expensePayment">Pago</label>
+              <select id="expensePayment">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Débito">Débito</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <button id="addExpenseBtn" class="primary-btn">Guardar gasto</button>
+        </article>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-label">Total USD</span>
+            <strong id="totalUsd">$0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total ARS</span>
+            <strong id="totalArs">$0.00</strong>
+          </div>
+        </div>
+
+        <article class="card summary-card">
+          <p class="card-eyebrow">Resumen por categoría</p>
+          <div id="expenseCategorySummary" class="summary-grid"></div>
+        </article>
+
+        <div id="expenseList" class="list-stack"></div>
+      </section>
+
+      <section id="weather" class="screen">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Clima</p>
+            <h2>Pronóstico para NYC</h2>
+          </div>
+          <span>☁️</span>
+        </div>
+
+        <article class="card weather-card">
+          <p class="card-eyebrow">Información del tiempo</p>
+          <p class="weather-note">El clima exacto se muestra cuando los datos están disponibles cerca de las fechas de viaje.</p>
+          <div id="weatherStatus" class="status-text">Cargando clima...</div>
+          <div id="weatherList" class="weather-grid"></div>
+        </article>
+      </section>
+
+      <section id="notes" class="screen">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Notas</p>
+            <h2>Apuntes del viaje</h2>
+          </div>
+          <span>📝</span>
+        </div>
+
+        <article class="card notes-card">
+          <label for="tripNotes">Notas personales</label>
+          <textarea id="tripNotes" rows="10" placeholder="Escribe tus ideas, pendientes, recomendaciones..."></textarea>
+          <p id="notesSaved" class="note-saved">Notas guardadas automáticamente</p>
+        </article>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button data-target="home" class="nav-btn active">Inicio</button>
+      <button data-target="places" class="nav-btn">Lugares</button>
+      <button data-target="expenses" class="nav-btn">Gastos</button>
+      <button data-target="weather" class="nav-btn">Clima</button>
+      <button data-target="notes" class="nav-btn">Notas</button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
