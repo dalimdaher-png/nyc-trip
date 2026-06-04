@@ -90,6 +90,72 @@
           <p class="note-text">Revisar la ruta actualizada al llegar, porque los recorridos pueden cambiar según horario, mantenimiento o demoras.</p>
         </section>
 
+        <section class="card voucher-card" id="hotelCard">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Hotel</p>
+              <h3>Voucher / reserva del hotel</h3>
+            </div>
+            <button id="toggleHotelInfo" class="secondary-btn" type="button">Editar</button>
+          </div>
+          <div class="voucher-summary" id="hotelSummary">No hay información guardada.</div>
+          <div class="voucher-details" id="hotelDetails" hidden>
+            <div class="input-group">
+              <label for="hotelReference">Código o confirmación</label>
+              <input id="hotelReference" type="text" placeholder="Ej: ABC12345" />
+            </div>
+            <div class="input-group">
+              <label for="hotelNotes">Detalles / voucher</label>
+              <textarea id="hotelNotes" rows="3" placeholder="Nombre del hotel, fechas, detalles de la reserva..."></textarea>
+            </div>
+            <div class="input-group">
+              <label for="hotelAmount">Monto (opcional)</label>
+              <div class="amount-row">
+                <select id="hotelCurrency">
+                  <option value="USD" selected>USD</option>
+                  <option value="ARS">ARS</option>
+                </select>
+                <input id="hotelAmount" type="number" min="0" step="0.01" placeholder="Ej: 4500" />
+              </div>
+            </div>
+            <button id="saveHotelInfo" class="primary-btn">Guardar hotel</button>
+          </div>
+          <p class="note-text">Esta información es para tu reserva, no se agrega automáticamente como gasto.</p>
+        </section>
+
+        <section class="card voucher-card" id="flightCard">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Pasajes</p>
+              <h3>Voucher / confirmación de vuelo</h3>
+            </div>
+            <button id="toggleFlightInfo" class="secondary-btn" type="button">Editar</button>
+          </div>
+          <div class="voucher-summary" id="flightSummary">No hay información guardada.</div>
+          <div class="voucher-details" id="flightDetails" hidden>
+            <div class="input-group">
+              <label for="flightReference">Código o confirmación</label>
+              <input id="flightReference" type="text" placeholder="Ej: XYZ67890" />
+            </div>
+            <div class="input-group">
+              <label for="flightNotes">Detalles / voucher</label>
+              <textarea id="flightNotes" rows="3" placeholder="Aerolínea, fecha, origen, destino..."></textarea>
+            </div>
+            <div class="input-group">
+              <label for="flightAmount">Monto (opcional)</label>
+              <div class="amount-row">
+                <select id="flightCurrency">
+                  <option value="USD" selected>USD</option>
+                  <option value="ARS">ARS</option>
+                </select>
+                <input id="flightAmount" type="number" min="0" step="0.01" placeholder="Ej: 1200" />
+              </div>
+            </div>
+            <button id="saveFlightInfo" class="primary-btn">Guardar vuelo</button>
+          </div>
+          <p class="note-text">Esta información es para tu reserva, no se agrega automáticamente como gasto.</p>
+        </section>
+
         <section class="card quick-links-card">
           <div class="card-header">
             <div>
@@ -204,6 +270,10 @@
                 <option value="Otro">Otro</option>
               </select>
             </div>
+            <div class="input-group">
+              <label for="expenseReference">Referencia / Confirmación</label>
+              <input id="expenseReference" type="text" placeholder="Código de reserva, voucher, pasaje..." />
+            </div>
           </div>
           <button id="addExpenseBtn" class="primary-btn">Guardar gasto</button>
         </article>
@@ -248,14 +318,14 @@
         <div class="section-title">
           <div>
             <p class="eyebrow">Notas</p>
-            <h2>Apuntes del viaje</h2>
+            <h2>Cosas por comprar / conocer</h2>
           </div>
           <span>📝</span>
         </div>
 
         <article class="card notes-card">
           <label for="tripNotes">Notas personales</label>
-          <textarea id="tripNotes" rows="10" placeholder="Escribe tus ideas, pendientes, recomendaciones..."></textarea>
+          <textarea id="tripNotes" rows="10" placeholder="Anota códigos de confirmación, vouchers, pasajes o ideas de compras..."></textarea>
           <p id="notesSaved" class="note-saved">Notas guardadas automáticamente</p>
         </article>
       </section>

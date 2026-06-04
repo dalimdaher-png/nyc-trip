@@ -22,7 +22,9 @@ const defaultPlaces = [
 const storageKeys = {
   places: 'nycPlaces',
   expenses: 'nycExpenses',
-  notes: 'nycNotes'
+  notes: 'nycNotes',
+  hotelInfo: 'nycHotelInfo',
+  flightInfo: 'nycFlightInfo'
 };
 
 const weatherIcons = {
@@ -59,7 +61,9 @@ const weatherIcons = {
 const state = {
   places: [],
   expenses: [],
-  notes: ''
+  notes: '',
+  hotelInfo: { reference: '', notes: '', amount: '', currency: 'USD' },
+  flightInfo: { reference: '', notes: '', amount: '', currency: 'USD' }
 };
 
 const elements = {
@@ -84,6 +88,7 @@ const elements = {
   expenseAmount: document.getElementById('expenseAmount'),
   expenseCurrency: document.getElementById('expenseCurrency'),
   expensePayment: document.getElementById('expensePayment'),
+  expenseReference: document.getElementById('expenseReference'),
   addExpenseBtn: document.getElementById('addExpenseBtn'),
   totalUsd: document.getElementById('totalUsd'),
   totalArs: document.getElementById('totalArs'),
@@ -93,6 +98,22 @@ const elements = {
   weatherList: document.getElementById('weatherList'),
   tripNotes: document.getElementById('tripNotes'),
   notesSaved: document.getElementById('notesSaved'),
+  hotelSummary: document.getElementById('hotelSummary'),
+  hotelDetails: document.getElementById('hotelDetails'),
+  hotelReference: document.getElementById('hotelReference'),
+  hotelNotes: document.getElementById('hotelNotes'),
+  hotelAmount: document.getElementById('hotelAmount'),
+  hotelCurrency: document.getElementById('hotelCurrency'),
+  toggleHotelInfo: document.getElementById('toggleHotelInfo'),
+  saveHotelInfo: document.getElementById('saveHotelInfo'),
+  flightSummary: document.getElementById('flightSummary'),
+  flightDetails: document.getElementById('flightDetails'),
+  flightReference: document.getElementById('flightReference'),
+  flightNotes: document.getElementById('flightNotes'),
+  flightAmount: document.getElementById('flightAmount'),
+  flightCurrency: document.getElementById('flightCurrency'),
+  toggleFlightInfo: document.getElementById('toggleFlightInfo'),
+  saveFlightInfo: document.getElementById('saveFlightInfo'),
   navButtons: document.querySelectorAll('.nav-btn')
 };
 
@@ -260,6 +281,7 @@ function renderExpenses() {
     label.innerHTML = `
       <strong>${expense.concept}</strong>
       <small>${expense.date} • ${expense.category} • ${expense.payment}</small>
+      ${expense.reference ? `<small>Ref: ${expense.reference}</small>` : ''}
     `;
 
     const amount = document.createElement('div');
@@ -310,6 +332,7 @@ function addExpense() {
   const amount = Number(elements.expenseAmount.value);
   const currency = elements.expenseCurrency.value;
   const payment = elements.expensePayment.value;
+  const reference = elements.expenseReference.value.trim();
 
   if (!date || !concept || !amount || amount <= 0) {
     alert('Completa fecha, concepto y monto válido.');
@@ -317,11 +340,12 @@ function addExpense() {
   }
 
   const id = `expense-${Date.now()}`;
-  state.expenses.push({ id, date, concept, category, amount, currency, payment });
+  state.expenses.push({ id, date, concept, category, amount, currency, payment, reference });
   saveStorage(storageKeys.expenses, state.expenses);
   elements.expenseDate.value = '';
   elements.expenseConcept.value = '';
   elements.expenseAmount.value = '';
+  elements.expenseReference.value = '';
   renderExpenses();
   updateSummary();
 }
@@ -403,6 +427,66 @@ function loadNotes() {
   elements.notesSaved.textContent = 'Notas guardadas automáticamente';
 }
 
+function renderVoucherSummary(type) {
+  const info = type === 'hotel' ? state.hotelInfo : state.flightInfo;
+  const summaryElement = type === 'hotel' ? elements.hotelSummary : elements.flightSummary;
+  const text = [];
+  if (info.reference) text.push(`Ref: ${info.reference}`);
+  if (info.notes) text.push(info.notes);
+  if (info.amount) text.push(`Monto: ${info.currency || 'USD'} ${Number(info.amount).toFixed(2)}`);
+  summaryElement.textContent = text.length ? text.join(' • ') : 'No hay información guardada.';
+}
+
+function toggleDetails(type) {
+  const details = type === 'hotel' ? elements.hotelDetails : elements.flightDetails;
+  const info = type === 'hotel' ? state.hotelInfo : state.flightInfo;
+
+  if (details.hidden) {
+    if (type === 'hotel') {
+      elements.hotelReference.value = info.reference || '';
+      elements.hotelNotes.value = info.notes || '';
+      elements.hotelAmount.value = info.amount || '';
+      elements.hotelCurrency.value = info.currency || 'USD';
+    } else {
+      elements.flightReference.value = info.reference || '';
+      elements.flightNotes.value = info.notes || '';
+      elements.flightAmount.value = info.amount || '';
+      elements.flightCurrency.value = info.currency || 'USD';
+    }
+  }
+
+  details.hidden = !details.hidden;
+}
+
+function saveHotelInfo() {
+  state.hotelInfo = {
+    reference: elements.hotelReference.value.trim(),
+    notes: elements.hotelNotes.value.trim(),
+    amount: elements.hotelAmount.value.trim(),
+    currency: elements.hotelCurrency.value
+  };
+  saveStorage(storageKeys.hotelInfo, state.hotelInfo);
+  renderVoucherSummary('hotel');
+  elements.hotelDetails.hidden = true;
+}
+
+function saveFlightInfo() {
+  state.flightInfo = {
+    reference: elements.flightReference.value.trim(),
+    notes: elements.flightNotes.value.trim(),
+    amount: elements.flightAmount.value.trim(),
+    currency: elements.flightCurrency.value
+  };
+  saveStorage(storageKeys.flightInfo, state.flightInfo);
+  renderVoucherSummary('flight');
+  elements.flightDetails.hidden = true;
+}
+
+function loadVoucherInfo() {
+  renderVoucherSummary('hotel');
+  renderVoucherSummary('flight');
+}
+
 function saveNotes() {
   state.notes = elements.tripNotes.value;
   saveStorage(storageKeys.notes, state.notes);
@@ -438,6 +522,8 @@ function init() {
   state.places = loadStorage(storageKeys.places, defaultPlaces);
   state.expenses = loadStorage(storageKeys.expenses, []);
   state.notes = loadStorage(storageKeys.notes, '');
+  state.hotelInfo = loadStorage(storageKeys.hotelInfo, state.hotelInfo);
+  state.flightInfo = loadStorage(storageKeys.flightInfo, state.flightInfo);
 
   updateCountdown();
   setInterval(updateCountdown, 60000);
@@ -451,9 +537,14 @@ function init() {
 
   elements.addPlaceBtn.addEventListener('click', addPlace);
   elements.addExpenseBtn.addEventListener('click', addExpense);
+  elements.toggleHotelInfo.addEventListener('click', () => toggleDetails('hotel'));
+  elements.saveHotelInfo.addEventListener('click', saveHotelInfo);
+  elements.toggleFlightInfo.addEventListener('click', () => toggleDetails('flight'));
+  elements.saveFlightInfo.addEventListener('click', saveFlightInfo);
   elements.tripNotes.addEventListener('input', handleNotesInput);
   elements.tripNotes.addEventListener('blur', saveNotes);
 
+  loadVoucherInfo();
   const today = new Date().toISOString().slice(0, 10);
   elements.expenseDate.value = today;
 }
