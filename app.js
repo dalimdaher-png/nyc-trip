@@ -437,25 +437,31 @@ function renderVoucherSummary(type) {
   summaryElement.textContent = text.length ? text.join(' • ') : 'No hay información guardada.';
 }
 
-function toggleDetails(type) {
-  const details = type === 'hotel' ? elements.hotelDetails : elements.flightDetails;
+function openDetails(type) {
   const info = type === 'hotel' ? state.hotelInfo : state.flightInfo;
+  const details = type === 'hotel' ? elements.hotelDetails : elements.flightDetails;
+  const btn = type === 'hotel' ? elements.toggleHotelInfo : elements.toggleFlightInfo;
 
-  if (details.hidden) {
-    if (type === 'hotel') {
-      elements.hotelReference.value = info.reference || '';
-      elements.hotelNotes.value = info.notes || '';
-      elements.hotelAmount.value = info.amount || '';
-      elements.hotelCurrency.value = info.currency || 'USD';
-    } else {
-      elements.flightReference.value = info.reference || '';
-      elements.flightNotes.value = info.notes || '';
-      elements.flightAmount.value = info.amount || '';
-      elements.flightCurrency.value = info.currency || 'USD';
-    }
+  if (!details.hidden) {
+    details.hidden = true;
+    btn.textContent = 'Editar';
+    return;
   }
 
-  details.hidden = !details.hidden;
+  if (type === 'hotel') {
+    elements.hotelReference.value = info.reference || '';
+    elements.hotelNotes.value = info.notes || '';
+    elements.hotelAmount.value = info.amount || '';
+    elements.hotelCurrency.value = info.currency || 'USD';
+  } else {
+    elements.flightReference.value = info.reference || '';
+    elements.flightNotes.value = info.notes || '';
+    elements.flightAmount.value = info.amount || '';
+    elements.flightCurrency.value = info.currency || 'USD';
+  }
+
+  details.hidden = false;
+  btn.textContent = 'Cerrar';
 }
 
 function saveHotelInfo() {
@@ -468,6 +474,7 @@ function saveHotelInfo() {
   saveStorage(storageKeys.hotelInfo, state.hotelInfo);
   renderVoucherSummary('hotel');
   elements.hotelDetails.hidden = true;
+  elements.toggleHotelInfo.textContent = 'Editar';
 }
 
 function saveFlightInfo() {
@@ -480,6 +487,7 @@ function saveFlightInfo() {
   saveStorage(storageKeys.flightInfo, state.flightInfo);
   renderVoucherSummary('flight');
   elements.flightDetails.hidden = true;
+  elements.toggleFlightInfo.textContent = 'Editar';
 }
 
 function loadVoucherInfo() {
@@ -537,9 +545,9 @@ function init() {
 
   elements.addPlaceBtn.addEventListener('click', addPlace);
   elements.addExpenseBtn.addEventListener('click', addExpense);
-  elements.toggleHotelInfo.addEventListener('click', () => toggleDetails('hotel'));
+  elements.toggleHotelInfo.addEventListener('click', () => openDetails('hotel'));
   elements.saveHotelInfo.addEventListener('click', saveHotelInfo);
-  elements.toggleFlightInfo.addEventListener('click', () => toggleDetails('flight'));
+  elements.toggleFlightInfo.addEventListener('click', () => openDetails('flight'));
   elements.saveFlightInfo.addEventListener('click', saveFlightInfo);
   elements.tripNotes.addEventListener('input', handleNotesInput);
   elements.tripNotes.addEventListener('blur', saveNotes);
