@@ -17,23 +17,35 @@ const tripData = {
   flights: [
     {
       leg: 'Ida · Buenos Aires → Nueva York',
-      airline: 'Avianca · tarifa Light · operado por Avianca Ecuador S.A. y Avianca',
+      airline: 'Avianca · tarifa Light',
       ref: 'AO8XTJ',
       segments: [
         {
-          flight: '1 parada · 14 h 10 min',
+          flight: 'AV 8396 · Avianca Ecuador S.A. · A320neo',
           from: 'EZE',
           fromCity: 'Buenos Aires',
           depDate: 'Jue 29 oct',
           depTime: '16:50',
+          to: 'BOG',
+          toCity: 'Bogotá',
+          arrDate: 'Jue 29 oct',
+          arrTime: '21:30'
+        },
+        {
+          flight: 'AV 20 · Avianca · A320neo',
+          from: 'BOG',
+          fromCity: 'Bogotá',
+          depDate: 'Jue 29 oct',
+          depTime: '23:05',
           to: 'JFK',
           toCity: 'Nueva York',
           arrDate: 'Vie 30 oct',
           arrTime: '06:00'
         }
       ],
+      layover: 'Escala en Bogotá: 1 h 35 min · Duración total del viaje: 14 h 10 min',
       baggage: '1 artículo personal, 1 equipaje de mano (10 kg) y 1 maleta de bodega (23 kg). Sin asiento seleccionado',
-      warning: 'Itinerario confirmado en avianca.com el 19/10 (después del cambio del 5/10). El check‑in online todavía no está habilitado.'
+      warning: 'Itinerario confirmado en avianca.com el 19/10 (después del cambio del 5/10). Horas locales de cada ciudad. El check‑in online todavía no está habilitado.'
     },
     {
       leg: 'Nueva York → Acapulco',
