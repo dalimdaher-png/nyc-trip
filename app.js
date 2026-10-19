@@ -112,7 +112,7 @@ const tripData = {
       ],
       layover: 'Escala en Ciudad de México: 13 h (pasás la noche)',
       baggage: '1 maleta facturada de 23 kg en cada tramo',
-      warning: 'Horarios según el último aviso de eDreams (9/8, cambio menor de la aerolínea). No encontré un mail de Aeroméxico con esta reserva: verificalos en aeromexico.com antes de viajar.'
+      warning: ''
     }
   ],
   hotel: {
