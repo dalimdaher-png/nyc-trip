@@ -2,11 +2,122 @@ const tripConfig = {
   title: 'NYC Trip 2026',
   startDate: '2026-10-30',
   endDate: '2026-11-06',
-  hotelName: 'The Gregorian New York City',
+  hotelName: 'Tribeca Hotel FiDi',
   city: 'New York',
   latitude: 40.7128,
   longitude: -74.0060,
   timezone: 'America/New_York'
+};
+
+// Datos de la reserva (vuelos y hotel). Se muestran siempre desde acá,
+// independientemente de lo que haya guardado el navegador en localStorage.
+// Todas las horas son locales del aeropuerto. Fuente: mails de eDreams, Avianca y Booking.com.
+const tripData = {
+  bookingRef: 'eDreams 25439634673',
+  flights: [
+    {
+      leg: 'Ida · Buenos Aires → Nueva York',
+      airline: 'Avianca',
+      ref: 'AO8XTJ',
+      segments: [
+        {
+          flight: 'Avianca',
+          from: 'EZE',
+          fromCity: 'Buenos Aires',
+          depDate: 'Jue 29 oct',
+          depTime: '16:50',
+          to: 'JFK',
+          toCity: 'Nueva York',
+          arrDate: 'Vie 30 oct',
+          arrTime: '06:00'
+        }
+      ],
+      baggage: '1 maleta facturada de 23 kg (EZE‑BOG y BOG‑JFK)',
+      warning: 'Avianca cambió este vuelo el 5/10 (ajustes operacionales) y el cambio quedó aceptado. Los horarios de arriba son los del cambio anterior (26/8): confirmá el itinerario actual en avianca.com con la reserva AO8XTJ.'
+    },
+    {
+      leg: 'Nueva York → Acapulco',
+      airline: 'American Airlines',
+      ref: 'DTKXEH',
+      segments: [
+        {
+          flight: 'AA 1892',
+          from: 'JFK',
+          fromCity: 'Nueva York · Terminal 8',
+          depDate: 'Vie 6 nov',
+          depTime: '19:29',
+          to: 'DFW',
+          toCity: 'Dallas',
+          arrDate: 'Vie 6 nov',
+          arrTime: '22:46'
+        },
+        {
+          flight: 'AA 3740 (operado por American Eagle)',
+          from: 'DFW',
+          fromCity: 'Dallas',
+          depDate: 'Sáb 7 nov',
+          depTime: '11:23',
+          to: 'ACA',
+          toCity: 'Acapulco',
+          arrDate: 'Sáb 7 nov',
+          arrTime: '14:28'
+        }
+      ],
+      layover: 'Escala en Dallas: 12 h 37 min (pasás la noche)',
+      baggage: 'Sin maleta facturada: solo equipaje de mano y artículo personal',
+      warning: ''
+    },
+    {
+      leg: 'Acapulco → Buenos Aires',
+      airline: 'Aeroméxico',
+      ref: 'KYYVFK',
+      segments: [
+        {
+          flight: 'AM 307',
+          from: 'ACA',
+          fromCity: 'Acapulco',
+          depDate: 'Vie 13 nov',
+          depTime: '19:06',
+          to: 'MEX',
+          toCity: 'Ciudad de México',
+          arrDate: 'Vie 13 nov',
+          arrTime: '20:35'
+        },
+        {
+          flight: 'AM 30',
+          from: 'MEX',
+          fromCity: 'Ciudad de México',
+          depDate: 'Sáb 14 nov',
+          depTime: '09:35',
+          to: 'EZE',
+          toCity: 'Buenos Aires',
+          arrDate: 'Sáb 14 nov',
+          arrTime: '21:50'
+        }
+      ],
+      layover: 'Escala en Ciudad de México: 13 h (pasás la noche)',
+      baggage: '1 maleta facturada de 23 kg en cada tramo',
+      warning: 'Horarios según el último aviso de eDreams (9/8). Verificalos con Aeroméxico antes de viajar.'
+    }
+  ],
+  hotel: {
+    name: 'Tribeca Hotel FiDi',
+    address: '102 Greenwich Street, New York, NY 10006',
+    phone: '+1 212-233-6701',
+    checkIn: 'Vie 30 oct · desde las 15:00 (hasta 00:00)',
+    checkOut: 'Vie 6 nov · de 08:00 a 11:00',
+    stay: '7 noches · 1 adulto · Suite con cama grande',
+    meals: 'Sin comidas incluidas',
+    confirmation: '6691299516',
+    pin: '3903',
+    guestName: 'Marcelo Daher Dalila Nahir',
+    payment: 'USD 2.308,49 · pagado por Booking.com el 29/9',
+    cancellation: 'La cancelación gratis venció el 28/10 a las 23:59 (hora de NY). Desde el 29/10 se cobra USD 429,78.',
+    notes: [
+      'En el check‑in piden documento de identidad y tarjeta de crédito.',
+      'Llegás a JFK a las 6:00 y el check‑in es a las 15:00: pedile al hotel que te guarde las valijas.'
+    ]
+  }
 };
 
 const defaultPlaces = [
@@ -495,6 +606,69 @@ function loadVoucherInfo() {
   renderVoucherSummary('flight');
 }
 
+// Renderiza las tarjetas fijas de vuelos y hotel a partir de tripData.
+function renderTripInfo() {
+  const flightsList = document.getElementById('flightsList');
+  const hotelInfo = document.getElementById('hotelInfo');
+  const { hotel } = tripData;
+
+  if (flightsList) {
+    flightsList.innerHTML = tripData.flights.map((flight) => `
+      <div class="flight-leg">
+        <div class="flight-leg-head">
+          <strong>${flight.leg}</strong>
+          <span class="ref-chip">Reserva ${flight.ref}</span>
+        </div>
+        <small class="flight-airline">${flight.airline}</small>
+        ${flight.segments.map((seg, index) => `
+          ${index > 0 && flight.layover ? `<p class="layover">${flight.layover}</p>` : ''}
+          <div class="flight-segment">
+            <div class="flight-point">
+              <strong>${seg.depTime}</strong>
+              <span>${seg.from}</span>
+              <small>${seg.fromCity}</small>
+              <small>${seg.depDate}</small>
+            </div>
+            <div class="flight-arrow">
+              <span>✈️</span>
+              <small>${seg.flight}</small>
+            </div>
+            <div class="flight-point right">
+              <strong>${seg.arrTime}</strong>
+              <span>${seg.to}</span>
+              <small>${seg.toCity}</small>
+              <small>${seg.arrDate}</small>
+            </div>
+          </div>
+        `).join('')}
+        <p class="detail-line">🧳 ${flight.baggage}</p>
+        ${flight.warning ? `<p class="warning-line">⚠️ ${flight.warning}</p>` : ''}
+      </div>
+    `).join('') + `<p class="note-text">Reserva de las tres etapas hecha por ${tripData.bookingRef}. Horarios locales de cada aeropuerto.</p>`;
+  }
+
+  if (hotelInfo) {
+    const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(`${hotel.name}, ${hotel.address}`)}`;
+    const phoneHref = `tel:${hotel.phone.replace(/[^+\d]/g, '')}`;
+    hotelInfo.innerHTML = `
+      <div class="hotel-name">
+        <strong>${hotel.name}</strong>
+        <span class="ref-chip">Booking ${hotel.confirmation} · PIN ${hotel.pin}</span>
+      </div>
+      <p class="detail-line">📍 <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${hotel.address}</a></p>
+      <p class="detail-line">📞 <a href="${phoneHref}">${hotel.phone}</a></p>
+      <p class="detail-line">🔑 Check‑in: ${hotel.checkIn}</p>
+      <p class="detail-line">🧳 Check‑out: ${hotel.checkOut}</p>
+      <p class="detail-line">🛏️ ${hotel.stay}</p>
+      <p class="detail-line">🍽️ ${hotel.meals}</p>
+      <p class="detail-line">👤 A nombre de: ${hotel.guestName}</p>
+      <p class="detail-line">💳 ${hotel.payment}</p>
+      <p class="detail-line">🚫 ${hotel.cancellation}</p>
+      ${hotel.notes.map((note) => `<p class="warning-line">ℹ️ ${note}</p>`).join('')}
+    `;
+  }
+}
+
 function saveNotes() {
   state.notes = elements.tripNotes.value;
   saveStorage(storageKeys.notes, state.notes);
@@ -553,6 +727,7 @@ function init() {
   elements.tripNotes.addEventListener('blur', saveNotes);
 
   loadVoucherInfo();
+  renderTripInfo();
   const today = new Date().toISOString().slice(0, 10);
   elements.expenseDate.value = today;
 }
