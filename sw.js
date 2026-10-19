@@ -1,9 +1,9 @@
-const CACHE_NAME = 'nyc-trip-v3';
+const CACHE_NAME = 'nyc-trip-v4';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
-  './app.js?v=3',
+  './app.js?v=4',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

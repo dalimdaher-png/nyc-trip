@@ -17,11 +17,11 @@ const tripData = {
   flights: [
     {
       leg: 'Ida · Buenos Aires → Nueva York',
-      airline: 'Avianca',
+      airline: 'Avianca · tarifa Light · operado por Avianca Ecuador S.A. y Avianca',
       ref: 'AO8XTJ',
       segments: [
         {
-          flight: 'Avianca',
+          flight: '1 parada · 14 h 10 min',
           from: 'EZE',
           fromCity: 'Buenos Aires',
           depDate: 'Jue 29 oct',
@@ -32,8 +32,8 @@ const tripData = {
           arrTime: '06:00'
         }
       ],
-      baggage: '1 maleta facturada de 23 kg (EZE‑BOG y BOG‑JFK)',
-      warning: 'Avianca cambió este vuelo el 5/10 (ajustes operacionales) y el cambio quedó aceptado. Los horarios de arriba son los del cambio anterior (26/8): confirmá el itinerario actual en avianca.com con la reserva AO8XTJ.'
+      baggage: '1 artículo personal, 1 equipaje de mano (10 kg) y 1 maleta de bodega (23 kg). Sin asiento seleccionado',
+      warning: 'Itinerario confirmado en avianca.com el 19/10 (después del cambio del 5/10). El check‑in online todavía no está habilitado.'
     },
     {
       leg: 'Nueva York → Acapulco',
