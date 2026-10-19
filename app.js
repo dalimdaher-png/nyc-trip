@@ -1,6 +1,6 @@
 const tripConfig = {
   title: 'NYC Trip 2026',
-  startDate: '2026-10-30',
+  startDate: '2026-10-29',
   endDate: '2026-11-06',
   hotelName: 'Tribeca Hotel FiDi',
   city: 'New York',
