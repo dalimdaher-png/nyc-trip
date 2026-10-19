@@ -14,6 +14,7 @@ const tripConfig = {
 // Todas las horas son locales del aeropuerto. Fuente: mails de eDreams, Avianca y Booking.com.
 const tripData = {
   bookingRef: 'eDreams 25439634673',
+  acapulcoStay: 'En Acapulco te quedás en lo de un amigo (sin hotel).',
   flights: [
     {
       leg: 'Ida · Buenos Aires → Nueva York',
@@ -49,6 +50,7 @@ const tripData = {
     },
     {
       leg: 'Nueva York → Acapulco',
+      section: 'acapulco',
       airline: 'American Airlines',
       ref: 'DTKXEH',
       segments: [
@@ -77,10 +79,11 @@ const tripData = {
       ],
       layover: 'Escala en Dallas: 12 h 37 min (pasás la noche)',
       baggage: 'Sin maleta facturada: solo equipaje de mano y artículo personal',
-      warning: ''
+      warning: 'Horarios confirmados por American Airlines (mail del 5/8). Tarifa Basic Economy: el asiento se asigna en el check‑in (o pagando), embarcás en el último grupo y no se permiten cambios ni reembolsos.'
     },
     {
       leg: 'Acapulco → Buenos Aires',
+      section: 'acapulco',
       airline: 'Aeroméxico',
       ref: 'KYYVFK',
       segments: [
@@ -109,7 +112,7 @@ const tripData = {
       ],
       layover: 'Escala en Ciudad de México: 13 h (pasás la noche)',
       baggage: '1 maleta facturada de 23 kg en cada tramo',
-      warning: 'Horarios según el último aviso de eDreams (9/8). Verificalos con Aeroméxico antes de viajar.'
+      warning: 'Horarios según el último aviso de eDreams (9/8, cambio menor de la aerolínea). No encontré un mail de Aeroméxico con esta reserva: verificalos en aeromexico.com antes de viajar.'
     }
   ],
   hotel: {
@@ -618,14 +621,9 @@ function loadVoucherInfo() {
   renderVoucherSummary('flight');
 }
 
-// Renderiza las tarjetas fijas de vuelos y hotel a partir de tripData.
-function renderTripInfo() {
-  const flightsList = document.getElementById('flightsList');
-  const hotelInfo = document.getElementById('hotelInfo');
-  const { hotel } = tripData;
-
-  if (flightsList) {
-    flightsList.innerHTML = tripData.flights.map((flight) => `
+// Arma el HTML de una lista de tramos de vuelo.
+function buildFlightLegs(legs) {
+  return legs.map((flight) => `
       <div class="flight-leg">
         <div class="flight-leg-head">
           <strong>${flight.leg}</strong>
@@ -656,7 +654,23 @@ function renderTripInfo() {
         <p class="detail-line">🧳 ${flight.baggage}</p>
         ${flight.warning ? `<p class="warning-line">⚠️ ${flight.warning}</p>` : ''}
       </div>
-    `).join('') + `<p class="note-text">Reserva de las tres etapas hecha por ${tripData.bookingRef}. Horarios locales de cada aeropuerto.</p>`;
+    `).join('') + `<p class="note-text">Reservas hechas por ${tripData.bookingRef}. Horarios locales de cada aeropuerto.</p>`;
+}
+
+// Renderiza las tarjetas fijas de vuelos, Acapulco y hotel a partir de tripData.
+function renderTripInfo() {
+  const flightsList = document.getElementById('flightsList');
+  const acapulcoList = document.getElementById('acapulcoList');
+  const hotelInfo = document.getElementById('hotelInfo');
+  const { hotel } = tripData;
+
+  if (flightsList) {
+    flightsList.innerHTML = buildFlightLegs(tripData.flights.filter((leg) => leg.section !== 'acapulco'));
+  }
+
+  if (acapulcoList) {
+    acapulcoList.innerHTML = buildFlightLegs(tripData.flights.filter((leg) => leg.section === 'acapulco'))
+      + `<p class="detail-line">🏠 ${tripData.acapulcoStay}</p>`;
   }
 
   if (hotelInfo) {
