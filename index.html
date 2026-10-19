@@ -2,382 +2,184 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NYC Trip 2026</title>
+  <meta name="description" content="Tu viaje a Nueva York y Acapulco: vuelos, hotel, lugares, gastos y notas." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=10" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <meta name="theme-color" content="#050507" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NYC Trip" />
 </head>
 <body>
-  <div class="app-shell">
-    <header class="app-header">
-      <div>
-        <p class="eyebrow">Viaje a Manhattan</p>
-        <h1>NYC Trip 2026</h1>
-      </div>
-      <div class="header-tag">Halloween Edition</div>
-    </header>
+  <div class="app">
+    <main class="screens">
 
-    <main class="app-main">
-      <section id="home" class="screen active-screen">
-        <div class="hero-card">
-          <div class="hero-text">
-            <p class="label">29 Oct - 06 Nov • Tribeca Hotel FiDi</p>
-            <h2>Preparando tu viaje</h2>
-            <p class="hero-subtitle">Todo listo para disfrutar Nueva York de forma libre, urbana y con un toque Halloween.</p>
-          </div>
-          <div class="hero-badge">#NYC2026</div>
-        </div>
+      <!-- HOY -->
+      <section class="screen is-active" id="hoy" aria-labelledby="hoy-title">
+        <header class="sign">
+          <h1 id="hoy-title">Hoy</h1>
+          <p class="sign-context" id="todayLabel"></p>
+        </header>
 
-        <div class="section-grid">
-          <article class="card card-counter">
-            <p class="card-eyebrow">Cuenta regresiva</p>
-            <div class="countdown-grid" id="countdownGrid">
-              <div><strong id="countDays">--</strong><span>Días</span></div>
-              <div><strong id="countHours">--</strong><span>Horas</span></div>
-              <div><strong id="countMinutes">--</strong><span>Minutos</span></div>
+        <div class="page">
+          <div class="hero">
+            <div class="hero-text">
+              <p class="hero-title">NYC Trip 2026</p>
+              <p class="hero-dates">29 oct al 14 nov</p>
+              <p class="hero-places">Nueva York y Acapulco, con Halloween en Manhattan</p>
             </div>
-            <p id="countdownStatus" class="status-text">Cargando contador...</p>
-          </article>
-        </div>
+            <p class="hero-status" id="heroStatus"></p>
+          </div>
 
-        <div class="stats-row">
-          <div class="stat-card">
-            <span class="stat-label">Días restantes</span>
-            <strong id="statRemaining">--</strong>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Total viaje</span>
-            <strong id="statTotalDays">--</strong>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Total gastado</span>
-            <strong id="statTotalSpent">--</strong>
-          </div>
-        </div>
+          <section class="board" id="nextBoard" aria-live="polite"></section>
 
-        <div class="stats-row">
-          <div class="stat-card dark">
-            <span class="stat-label">Pendientes</span>
-            <strong id="statPending">--</strong>
-          </div>
-          <div class="stat-card dark">
-            <span class="stat-label">Visitados</span>
-            <strong id="statVisited">--</strong>
-          </div>
-        </div>
+          <div class="stats" id="stats"></div>
 
-        <section class="card flights-card" id="flightsCard">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Itinerario</p>
-              <h3>Vuelos</h3>
-            </div>
-            <span>✈️</span>
-          </div>
-          <div id="flightsList"></div>
-        </section>
-
-        <section class="card hotel-info-card" id="hotelInfoCard">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Alojamiento</p>
-              <h3>Hotel</h3>
-            </div>
-            <span>🏨</span>
-          </div>
-          <div id="hotelInfo"></div>
-        </section>
-
-        <section class="card flights-card" id="acapulcoCard">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Después de Nueva York</p>
-              <h3>Acapulco</h3>
-            </div>
-            <span>🌴</span>
-          </div>
-          <div id="acapulcoList"></div>
-        </section>
-
-        <section class="card transport-card">
-          <div>
-            <p class="card-eyebrow">Desde JFK al hotel</p>
-            <h3>Transporte público + OMNY</h3>
-            <p>Usa el subte / metro y paga con OMNY en tarjeta contactless, celular o smartwatch.</p>
-          </div>
-          <div class="transport-actions">
-            <a href="https://www.google.com/maps/dir/JFK+Airport,+Queens,+NY/Tribeca+Hotel+FiDi,+102+Greenwich+St,+New+York,+NY+10006" target="_blank" rel="noopener noreferrer">Ruta al hotel</a>
-            <a href="https://www.google.com/maps/search/OMNY+MTA+metro+station" target="_blank" rel="noopener noreferrer">Buscar OMNY</a>
-          </div>
-          <p class="note-text">Revisar la ruta actualizada al llegar, porque los recorridos pueden cambiar según horario, mantenimiento o demoras.</p>
-        </section>
-
-        <section class="card voucher-card" id="hotelCard">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Hotel</p>
-              <h3>Voucher / reserva del hotel</h3>
-            </div>
-            <button id="toggleHotelInfo" class="secondary-btn" type="button">Editar</button>
-          </div>
-          <div class="voucher-summary" id="hotelSummary">No hay información guardada.</div>
-          <div class="voucher-details" id="hotelDetails" hidden>
-            <div class="input-group">
-              <label for="hotelReference">Código o confirmación</label>
-              <input id="hotelReference" type="text" placeholder="Ej: ABC12345" />
-            </div>
-            <div class="input-group">
-              <label for="hotelNotes">Detalles / voucher</label>
-              <textarea id="hotelNotes" rows="3" placeholder="Nombre del hotel, fechas, detalles de la reserva..."></textarea>
-            </div>
-            <div class="input-group">
-              <label for="hotelAmount">Monto (opcional)</label>
-              <div class="amount-row">
-                <select id="hotelCurrency">
-                  <option value="USD" selected>USD</option>
-                  <option value="ARS">ARS</option>
-                </select>
-                <input id="hotelAmount" type="number" min="0" step="0.01" placeholder="Ej: 4500" />
+          <section class="block" aria-labelledby="weather-title">
+            <div class="block-head">
+              <h2 id="weather-title">Clima</h2>
+              <div class="segmented" role="tablist" aria-label="Ciudad del pronóstico" id="weatherTabs">
+                <button type="button" role="tab" data-place="nyc" aria-selected="true">Nueva York</button>
+                <button type="button" role="tab" data-place="aca" aria-selected="false">Acapulco</button>
               </div>
             </div>
-            <button id="saveHotelInfo" class="primary-btn">Guardar hotel</button>
-          </div>
-          <p class="note-text">Esta información es para tu reserva, no se agrega automáticamente como gasto.</p>
-        </section>
+            <div class="weather-days" id="weatherDays"></div>
+            <p class="hint" id="weatherStatus">Cargando pronóstico…</p>
+          </section>
 
-        <section class="card voucher-card" id="flightCard">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Pasajes</p>
-              <h3>Voucher / confirmación de vuelo</h3>
-            </div>
-            <button id="toggleFlightInfo" class="secondary-btn" type="button">Editar</button>
-          </div>
-          <div class="voucher-summary" id="flightSummary">No hay información guardada.</div>
-          <div class="voucher-details" id="flightDetails" hidden>
-            <div class="input-group">
-              <label for="flightReference">Código o confirmación</label>
-              <input id="flightReference" type="text" placeholder="Ej: XYZ67890" />
-            </div>
-            <div class="input-group">
-              <label for="flightNotes">Detalles / voucher</label>
-              <textarea id="flightNotes" rows="3" placeholder="Aerolínea, fecha, origen, destino..."></textarea>
-            </div>
-            <div class="input-group">
-              <label for="flightAmount">Monto (opcional)</label>
-              <div class="amount-row">
-                <select id="flightCurrency">
-                  <option value="USD" selected>USD</option>
-                  <option value="ARS">ARS</option>
-                </select>
-                <input id="flightAmount" type="number" min="0" step="0.01" placeholder="Ej: 1200" />
-              </div>
-            </div>
-            <button id="saveFlightInfo" class="primary-btn">Guardar vuelo</button>
-          </div>
-          <p class="note-text">Esta información es para tu reserva, no se agrega automáticamente como gasto.</p>
-        </section>
-
-        <section class="card quick-links-card">
-          <div class="card-header">
-            <div>
-              <p class="card-eyebrow">Links rápidos</p>
-              <h3>Accesos directos</h3>
-            </div>
-            <span>🔗</span>
-          </div>
-          <div class="link-grid">
-            <a href="https://www.google.com/maps/search/Tribeca+Hotel+FiDi,+102+Greenwich+St,+New+York,+NY+10006" target="_blank" rel="noopener noreferrer">Hotel</a>
-            <a href="https://www.google.com/maps/dir/JFK+Airport,+Queens,+NY/Tribeca+Hotel+FiDi,+102+Greenwich+St,+New+York,+NY+10006" target="_blank" rel="noopener noreferrer">JFK → Hotel</a>
-            <a href="https://omny.info/" target="_blank" rel="noopener noreferrer">OMNY / MTA</a>
-            <a href="https://www.google.com/maps/search/Times+Square" target="_blank" rel="noopener noreferrer">Times Square</a>
-            <a href="https://www.google.com/maps/search/Central+Park" target="_blank" rel="noopener noreferrer">Central Park</a>
-            <a href="https://www.google.com/maps/search/Brooklyn" target="_blank" rel="noopener noreferrer">Brooklyn</a>
-            <a href="https://www.google.com/maps/search/Edge+Hudson+Yards" target="_blank" rel="noopener noreferrer">Edge</a>
-            <a href="https://www.google.com/maps/search/Rockefeller+Center" target="_blank" rel="noopener noreferrer">Rockefeller</a>
-          </div>
-        </section>
+          <section class="block" aria-labelledby="links-title">
+            <div class="block-head"><h2 id="links-title">Accesos rápidos</h2></div>
+            <ul class="list" id="quickLinks"></ul>
+          </section>
+        </div>
       </section>
 
-      <section id="places" class="screen">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">Checklist</p>
-            <h2>Lugares para visitar</h2>
-          </div>
-          <span>🗺️</span>
-        </div>
-
-        <article class="card">
-          <div class="form-row">
-            <div class="input-group">
-              <label for="placeName">Nuevo lugar</label>
-              <input id="placeName" type="text" placeholder="Agregar lugar" autocomplete="off" />
-            </div>
-            <div class="input-group small">
-              <label for="placeCategory">Categoría</label>
-              <select id="placeCategory">
-                <option value="Otro">Otro</option>
-                <option value="Manhattan">Manhattan</option>
-                <option value="Brooklyn">Brooklyn</option>
-                <option value="New Jersey">New Jersey</option>
-                <option value="Mirador">Mirador</option>
-                <option value="Parque">Parque</option>
-                <option value="Halloween">Halloween</option>
-              </select>
-            </div>
-            <button id="addPlaceBtn" class="primary-btn">Agregar</button>
-          </div>
-        </article>
-
-        <article class="card progress-card">
-          <div>
-            <p class="card-eyebrow">Progreso</p>
-            <strong id="placeProgressText">0 de 0 lugares visitados</strong>
-          </div>
-          <div class="progress-bar"><div id="placeProgressFill"></div></div>
-        </article>
-
-        <div id="placesList" class="list-stack"></div>
+      <!-- VIAJE -->
+      <section class="screen" id="viaje" aria-labelledby="viaje-title">
+        <header class="sign">
+          <h1 id="viaje-title">Viaje</h1>
+          <p class="sign-context">17 días, 3 vuelos, 2 ciudades</p>
+        </header>
+        <div class="page" id="tripLine"></div>
       </section>
 
-      <section id="expenses" class="screen">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">Finanzas</p>
-            <h2>Gastos del viaje</h2>
+      <!-- LUGARES -->
+      <section class="screen" id="lugares" aria-labelledby="lugares-title">
+        <header class="sign">
+          <h1 id="lugares-title">Lugares</h1>
+          <p class="sign-context" id="placesContext"></p>
+        </header>
+        <div class="page">
+          <form class="add-place" id="placeForm" autocomplete="off">
+            <label class="sr-only" for="placeName">Lugar nuevo</label>
+            <input id="placeName" type="text" placeholder="Agregar un lugar" enterkeyhint="done" />
+            <label class="sr-only" for="placeCategory">Zona</label>
+            <select id="placeCategory">
+              <option value="Manhattan">Manhattan</option>
+              <option value="Brooklyn">Brooklyn</option>
+              <option value="New Jersey">New Jersey</option>
+              <option value="Mirador">Mirador</option>
+              <option value="Parque">Parque</option>
+              <option value="Halloween">Halloween</option>
+              <option value="Acapulco">Acapulco</option>
+              <option value="Otro">Otro</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-icon" aria-label="Agregar lugar" id="addPlaceBtn"></button>
+          </form>
+
+          <div class="progress" aria-hidden="true"><div class="progress-fill" id="placeProgress"></div></div>
+
+          <div class="segmented segmented-full" role="tablist" aria-label="Filtrar lugares" id="placeFilter">
+            <button type="button" role="tab" data-filter="all" aria-selected="true">Todos</button>
+            <button type="button" role="tab" data-filter="pending" aria-selected="false">Pendientes</button>
+            <button type="button" role="tab" data-filter="visited" aria-selected="false">Visitados</button>
           </div>
-          <span>💳</span>
+
+          <ul class="list" id="placesList"></ul>
         </div>
-
-        <article class="card">
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="expenseDate">Fecha</label>
-              <input id="expenseDate" type="date" />
-            </div>
-            <div class="input-group">
-              <label for="expenseConcept">Concepto</label>
-              <input id="expenseConcept" type="text" placeholder="Comida, transporte..." />
-            </div>
-            <div class="input-group">
-              <label for="expenseCategory">Categoría</label>
-              <select id="expenseCategory">
-                <option value="Comida">Comida</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Compras">Compras</option>
-                <option value="Entradas / atracciones">Entradas / atracciones</option>
-                <option value="Hotel">Hotel</option>
-                <option value="Vuelos">Vuelos</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="expenseAmount">Monto</label>
-              <input id="expenseAmount" type="number" min="0" step="0.01" placeholder="0.00" />
-            </div>
-            <div class="input-group">
-              <label for="expenseCurrency">Moneda</label>
-              <select id="expenseCurrency">
-                <option value="USD">USD</option>
-                <option value="ARS">ARS</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="expensePayment">Pago</label>
-              <select id="expensePayment">
-                <option value="Efectivo">Efectivo</option>
-                <option value="Tarjeta">Tarjeta</option>
-                <option value="Débito">Débito</option>
-                <option value="Otro">Otro</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="expenseReference">Referencia / Confirmación</label>
-              <input id="expenseReference" type="text" placeholder="Código de reserva, voucher, pasaje..." />
-            </div>
-          </div>
-          <button id="addExpenseBtn" class="primary-btn">Guardar gasto</button>
-        </article>
-
-        <div class="stats-row">
-          <div class="stat-card">
-            <span class="stat-label">Total USD</span>
-            <strong id="totalUsd">$0.00</strong>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Total ARS</span>
-            <strong id="totalArs">$0.00</strong>
-          </div>
-        </div>
-
-        <article class="card summary-card">
-          <p class="card-eyebrow">Resumen por categoría</p>
-          <div id="expenseCategorySummary" class="summary-grid"></div>
-        </article>
-
-        <div id="expenseList" class="list-stack"></div>
       </section>
 
-      <section id="weather" class="screen">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">Clima</p>
-            <h2>Pronóstico para NYC</h2>
-          </div>
-          <span>☁️</span>
-        </div>
+      <!-- GASTOS -->
+      <section class="screen" id="gastos" aria-labelledby="gastos-title">
+        <header class="sign">
+          <h1 id="gastos-title">Gastos</h1>
+          <p class="sign-context" id="expensesContext"></p>
+        </header>
+        <div class="page">
+          <div class="totals" id="expenseTotals"></div>
 
-        <article class="card weather-card">
-          <p class="card-eyebrow">Información del tiempo</p>
-          <p class="weather-note">El clima exacto se muestra cuando los datos están disponibles cerca de las fechas de viaje.</p>
-          <div id="weatherStatus" class="status-text">Cargando clima...</div>
-          <div id="weatherList" class="weather-grid"></div>
-        </article>
+          <section class="block" id="categoryBlock" aria-labelledby="cat-title">
+            <div class="block-head">
+              <h2 id="cat-title">Por categoría</h2>
+              <div class="segmented" role="tablist" aria-label="Moneda" id="categoryCurrency"></div>
+            </div>
+            <div class="bars" id="categoryBars"></div>
+          </section>
+
+          <div id="expenseList"></div>
+        </div>
+        <button type="button" class="fab" id="addExpenseBtn"></button>
       </section>
 
-      <section id="notes" class="screen">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">Notas</p>
-            <h2>Cosas por comprar / conocer</h2>
-          </div>
-          <span>📝</span>
-        </div>
+      <!-- NOTAS -->
+      <section class="screen" id="notas" aria-labelledby="notas-title">
+        <header class="sign">
+          <h1 id="notas-title">Notas</h1>
+          <p class="sign-context" id="notesStatus">Se guardan solas</p>
+        </header>
+        <div class="page">
+          <label class="sr-only" for="tripNotes">Notas del viaje</label>
+          <textarea id="tripNotes" class="notes" rows="12" placeholder="Compras pendientes, ideas, direcciones…"></textarea>
 
-        <article class="card notes-card">
-          <label for="tripNotes">Notas personales</label>
-          <textarea id="tripNotes" rows="10" placeholder="Anota códigos de confirmación, vouchers, pasajes o ideas de compras..."></textarea>
-          <p id="notesSaved" class="note-saved">Notas guardadas automáticamente</p>
-        </article>
+          <section class="block" id="vouchersBlock" hidden aria-labelledby="vouchers-title">
+            <div class="block-head"><h2 id="vouchers-title">Lo que guardaste en vouchers</h2></div>
+            <ul class="list" id="vouchersList"></ul>
+          </section>
+
+          <section class="block" aria-labelledby="backup-title">
+            <div class="block-head"><h2 id="backup-title">Copia de seguridad</h2></div>
+            <p class="hint">Tus lugares, gastos y notas viven solo en este celular. Bajá una copia antes de viajar y cada tanto durante el viaje.</p>
+            <div class="button-row">
+              <button type="button" class="btn btn-secondary" id="exportBtn"></button>
+              <button type="button" class="btn btn-secondary" id="importBtn"></button>
+              <input type="file" id="importFile" accept="application/json,.json" hidden />
+            </div>
+          </section>
+        </div>
       </section>
     </main>
 
-    <nav class="bottom-nav">
-      <button data-target="home" class="nav-btn active">Inicio</button>
-      <button data-target="places" class="nav-btn">Lugares</button>
-      <button data-target="expenses" class="nav-btn">Gastos</button>
-      <button data-target="weather" class="nav-btn">Clima</button>
-      <button data-target="notes" class="nav-btn">Notas</button>
+    <nav class="tabbar" aria-label="Secciones">
+      <button type="button" class="tab is-active" data-target="hoy" aria-current="page"><span data-icon="house"></span>Hoy</button>
+      <button type="button" class="tab" data-target="viaje"><span data-icon="route"></span>Viaje</button>
+      <button type="button" class="tab" data-target="lugares"><span data-icon="map-pin"></span>Lugares</button>
+      <button type="button" class="tab" data-target="gastos"><span data-icon="wallet"></span>Gastos</button>
+      <button type="button" class="tab" data-target="notas"><span data-icon="notebook-pen"></span>Notas</button>
     </nav>
   </div>
 
-  <script src="app.js?v=9"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch((error) => console.warn('SW registration failed', error));
-      });
-    }
-  </script>
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div id="sheetBody"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="update-bar" id="updateBar" hidden>
+    <span>Hay una versión nueva de la app.</span>
+    <button type="button" class="btn btn-small btn-primary" id="updateBtn">Actualizar</button>
+  </div>
+
+  <script src="icons.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

@@ -1,12 +1,12 @@
 {
   "name": "NYC Trip 2026",
   "short_name": "NYC Trip",
-  "description": "Tu compañero para el viaje a Nueva York - Halloween Edition",
-  "start_url": "./index.html",
+  "description": "Tu viaje a Nueva York y Acapulco: vuelos, hotel, lugares, gastos y notas.",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#050507",
-  "theme_color": "#050507",
+  "background_color": "#141416",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
@@ -21,5 +21,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "lang": "es"
 }
