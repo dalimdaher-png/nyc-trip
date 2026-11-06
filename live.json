@@ -1,0 +1,21 @@
+{
+  "updated": "2026-11-06T17:24:00-05:00",
+  "source": "American Airlines y FlightStats",
+  "flights": {
+    "AA 1892": {
+      "status": "delayed",
+      "dep": "2026-11-06T20:29:00-05:00",
+      "arr": "2026-11-06T23:39:00-06:00",
+      "terminal": "8",
+      "gate": "39",
+      "gateWas": "1",
+      "seat": "",
+      "group": "",
+      "checkedIn": true,
+      "note": "American espera a la tripulación por una demora anterior."
+    },
+    "AA 3740": { "status": "scheduled" },
+    "AM 307": { "status": "scheduled" },
+    "AM 30": { "status": "scheduled" }
+  }
+}

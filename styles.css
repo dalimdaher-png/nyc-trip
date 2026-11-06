@@ -956,3 +956,60 @@ button.row { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- Estado en vivo del vuelo (demora, puerta, asiento, pase) ---------- */
+
+.live {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--hair-strong);
+  border-radius: var(--r-md);
+}
+
+.leg-live { padding: 0 14px 12px; }
+.leg-live .live { background: #000; }
+
+.live-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.live-status strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.live-was { color: var(--faint); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+
+.leg-was { color: var(--faint); font-size: 0.8rem; text-decoration: line-through; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.pill.warn { background: var(--yellow); color: #000; }
+.pill.ok { background: var(--teal); color: #000; }
+.pill.bad { background: var(--danger); color: #000; }
+
+.live-note { color: var(--muted); font-size: 0.9rem; }
+
+.live-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.live-grid > div {
+  padding: 8px 4px;
+  border: 1px solid #262626;
+  border-radius: var(--r-sm);
+  text-align: center;
+}
+.live-grid dt { color: var(--muted); font-size: 0.72rem; }
+.live-grid dd { margin: 0; font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.live-grid dd small { display: block; color: var(--faint); font-size: 0.7rem; font-weight: 500; }
+
+.live-pass { display: flex; gap: 8px; align-items: flex-start; font-size: 0.9rem; }
+.live-pass .icon { width: 18px; height: 18px; flex: none; color: var(--teal); }
+
+.live-updated { color: var(--faint); font-size: 0.78rem; }

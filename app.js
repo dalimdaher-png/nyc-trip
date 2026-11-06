@@ -9,7 +9,8 @@
 /* ---------- Almacenamiento: solo guarda el último pronóstico ---------- */
 
 const STORAGE = {
-  weather: 'nycWeatherCache'
+  weather: 'nycWeatherCache',
+  live: 'nycLiveCache'
 };
 
 /* ---------- Datos del viaje ----------
@@ -28,15 +29,19 @@ const LINKS = {
   aeromexico: 'https://aeromexico.com/'
 };
 
+/* Los horarios de abajo son los programados originalmente. Las demoras, la
+   terminal, la puerta, el asiento y el pase de abordar se leen de live.json
+   (ver loadLive y applyLive), así se actualizan sin tocar este archivo. */
 const FLIGHTS = {
   aca: {
     airline: 'American Airlines',
     fare: 'Basic Economy',
     ref: 'DTKXEH',
+    link: LINKS.american,
     segments: [
       {
         num: 'AA 1892',
-        op: 'Sale de la Terminal 8 de JFK',
+        op: '',
         from: { code: 'JFK', city: 'Nueva York' },
         to: { code: 'DFW', city: 'Dallas' },
         dep: '2026-11-06T19:29:00-05:00',
@@ -53,8 +58,6 @@ const FLIGHTS = {
     ],
     facts: [
       ['Equipaje', 'Una maleta en bodega, además del equipaje de mano y el artículo personal'],
-      ['Asiento', 'Se asigna en el check‑in, o pagando para elegirlo'],
-      ['Check‑in online', '24 h antes, en la app de American'],
       ['Condiciones', 'Embarcás en el último grupo. No admite cambios ni reembolsos']
     ]
   },
@@ -62,6 +65,7 @@ const FLIGHTS = {
     airline: 'Aeroméxico',
     fare: '',
     ref: 'KYYVFK',
+    link: LINKS.aeromexico,
     segments: [
       {
         num: 'AM 307',
@@ -87,16 +91,22 @@ const FLIGHTS = {
   }
 };
 
-/* Hitos que alimentan la tarjeta "Próximo" de la pantalla Hoy. */
-const MILESTONES = [
-  { at: '2026-11-05T19:29:00-05:00', place: 'Nueva York', title: 'Se habilita el check‑in de American', detail: 'En la app de American, 24 h antes del vuelo. Reserva DTKXEH.', link: LINKS.american, linkLabel: 'Ir a American' },
-  { at: '2026-11-06T19:29:00-05:00', place: 'Nueva York', title: 'Vuelo a Acapulco', detail: 'AA 1892 sale de JFK Terminal 8 a las 19:29. Pasás la noche en Dallas.' },
-  { at: '2026-11-07T11:23:00-06:00', place: 'Dallas', title: 'Conexión en Dallas', detail: 'AA 3740 sale a las 11:23 hacia Acapulco.' },
-  { at: '2026-11-07T14:28:00-06:00', place: 'Acapulco', title: 'Llegada a Acapulco', detail: 'Aterrizás a las 14:28. Te quedás en lo de un amigo.' },
-  { at: '2026-11-13T19:06:00-06:00', place: 'Acapulco', title: 'Vuelo a Buenos Aires', detail: 'AM 307 sale a las 19:06. Pasás la noche en Ciudad de México.' },
-  { at: '2026-11-14T09:35:00-06:00', place: 'Ciudad de México', title: 'Conexión en Ciudad de México', detail: 'AM 30 sale a las 09:35 hacia Ezeiza.' },
-  { at: '2026-11-14T21:50:00-03:00', place: 'Buenos Aires', title: 'Llegada a Buenos Aires', detail: 'Aterrizás en Ezeiza a las 21:50.' }
-];
+/* Hitos que alimentan la tarjeta "Próximo" de la pantalla Hoy.
+   Se arman a partir de los vuelos, así las horas siguen a las demoras.
+   Los hitos con `flight` muestran el panel de estado del vuelo. */
+function buildMilestones() {
+  const A = FLIGHTS.aca.segments;
+  const V = FLIGHTS.vuelta.segments;
+  return [
+    { at: '2026-11-05T19:29:00-05:00', place: 'Nueva York', title: 'Se habilita el check‑in de American', detail: 'En la app de American, 24 h antes del vuelo. Reserva DTKXEH.', link: LINKS.american, linkLabel: 'Ir a American' },
+    { at: A[0].dep, flight: A[0], place: 'Nueva York', title: 'Vuelo a Acapulco', detail: `${A[0].num} sale de JFK a las ${stamp(A[0].dep).hm}. Pasás la noche en Dallas.` },
+    { at: A[1].dep, flight: A[1], place: 'Dallas', title: 'Conexión en Dallas', detail: `${A[1].num} sale a las ${stamp(A[1].dep).hm} hacia Acapulco.` },
+    { at: A[1].arr, place: 'Acapulco', title: 'Llegada a Acapulco', detail: `Aterrizás a las ${stamp(A[1].arr).hm}. Te quedás en lo de un amigo.` },
+    { at: V[0].dep, flight: V[0], place: 'Acapulco', title: 'Vuelo a Buenos Aires', detail: `${V[0].num} sale a las ${stamp(V[0].dep).hm}. Pasás la noche en Ciudad de México.` },
+    { at: V[1].dep, flight: V[1], place: 'Ciudad de México', title: 'Conexión en Ciudad de México', detail: `${V[1].num} sale a las ${stamp(V[1].dep).hm} hacia Ezeiza.` },
+    { at: V[1].arr, place: 'Buenos Aires', title: 'Llegada a Buenos Aires', detail: `Aterrizás en Ezeiza a las ${stamp(V[1].arr).hm}.` }
+  ];
+}
 
 /* Pronóstico: muestra solo los días que vas a estar en cada ciudad. */
 const WEATHER_PLACES = {
@@ -202,7 +212,8 @@ function externalAttrs() {
 
 const state = {
   weather: null,
-  weatherError: false
+  weatherError: false,
+  live: null
 };
 
 const ui = {
@@ -211,6 +222,41 @@ const ui = {
 
 function loadState() {
   state.weather = load(STORAGE.weather, null);
+  state.live = load(STORAGE.live, null);
+}
+
+/* ---------- Estado en vivo de los vuelos (live.json) ----------
+   live.json guarda, por número de vuelo, lo que cambia durante el viaje:
+   dep / arr (horario actual), status, terminal, gate, gateWas, seat, group,
+   checkedIn y note. Lo que no esté en el archivo queda como "—". */
+
+function applyLive() {
+  const flights = state.live && state.live.flights ? state.live.flights : {};
+  Object.values(FLIGHTS).forEach((f) => {
+    f.segments.forEach((s) => {
+      if (!s.base) s.base = { dep: s.dep, arr: s.arr };
+      const l = flights[s.num] || {};
+      s.dep = l.dep || s.base.dep;
+      s.arr = l.arr || s.base.arr;
+      s.live = l;
+    });
+  });
+  TRIP.start = FLIGHTS.aca.segments[0].dep;
+  const back = FLIGHTS.vuelta.segments;
+  TRIP.end = back[back.length - 1].arr;
+}
+
+async function loadLive() {
+  try {
+    const response = await fetch('live.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    state.live = await response.json();
+    save(STORAGE.live, state.live);
+  } catch (error) {
+    /* sin conexión: se sigue mostrando la última copia guardada */
+  }
+  applyLive();
+  renderTimeBased();
 }
 
 /* ---------- Avisos breves ---------- */
@@ -247,8 +293,8 @@ function phase(now) {
     if (days === 1) return { text: 'Mañana viajás a Acapulco', stage: 'aca' };
     return { text: `Faltan ${days} días`, stage: 'aca' };
   }
-  if (now < t('2026-11-07T14:28:00-06:00')) return { text: 'Rumbo a Acapulco', stage: 'aca' };
-  if (now < t('2026-11-13T19:06:00-06:00')) {
+  if (now < t(FLIGHTS.aca.segments[1].arr)) return { text: 'Rumbo a Acapulco', stage: 'aca' };
+  if (now < t(FLIGHTS.vuelta.segments[0].dep)) {
     const day = Math.min(7, Math.floor((now - t('2026-11-07T00:00:00-06:00')) / 86400000) + 1);
     return { text: `Día ${day} de 7 en Acapulco`, stage: 'aca' };
   }
@@ -264,8 +310,57 @@ function renderHero(now) {
   el.dataset.stage = p.stage;
 }
 
+/* Estado de un vuelo: demora, terminal, puerta, asiento y pase de abordar.
+   Se muestra en la tarjeta "Próximo" de Hoy y en cada vuelo de Viaje. */
+function livePanel(s, f) {
+  const l = s.live || {};
+  const delay = Math.round((Date.parse(s.dep) - Date.parse(s.base.dep)) / 60000);
+  let pill;
+  if (l.status === 'cancelled') pill = { cls: 'bad', text: 'Cancelado' };
+  else if (delay > 0) pill = { cls: 'warn', text: `Demorado ${duration(delay * 60000)}` };
+  else if (delay < 0) pill = { cls: 'ok', text: `Adelantado ${duration(-delay * 60000)}` };
+  else if (l.status === 'ontime') pill = { cls: 'ok', text: 'A tiempo' };
+  else pill = { cls: '', text: 'Programado' };
+
+  const dash = '—';
+  const gate = l.gate
+    ? `${esc(l.gate)}${l.gateWas ? ` <small>(antes ${esc(l.gateWas)})</small>` : ''}`
+    : dash;
+  const was = delay !== 0 ? `<span class="live-was">Antes ${stamp(s.base.dep).hm}</span> <strong>${stamp(s.dep).hm}</strong>` : '';
+
+  let pass = '';
+  if (l.checkedIn) {
+    pass = `<p class="live-pass">${icon('check')}<span>Check‑in hecho. Tu pase de abordar está en el Wallet del celular o en la app de American.</span></p>`;
+  }
+
+  const updated = state.live && state.live.updated ? new Date(state.live.updated) : null;
+  const updatedText = updated && !Number.isNaN(updated.getTime())
+    ? `Actualizado a las ${pad(updated.getHours())}:${pad(updated.getMinutes())}${state.live.source ? `. Fuente: ${esc(state.live.source)}` : ''}`
+    : '';
+
+  return `
+    <div class="live">
+      <div class="live-status"><span class="pill ${pill.cls}">${pill.text}</span>${was}</div>
+      ${l.note ? `<p class="live-note">${esc(l.note)}</p>` : ''}
+      <dl class="live-grid">
+        <div><dt>Terminal</dt><dd>${l.terminal ? esc(l.terminal) : dash}</dd></div>
+        <div><dt>Puerta</dt><dd>${gate}</dd></div>
+        <div><dt>Asiento</dt><dd>${l.seat ? esc(l.seat) : dash}</dd></div>
+        <div><dt>Grupo</dt><dd>${l.group ? esc(l.group) : dash}</dd></div>
+      </dl>
+      ${pass}
+      ${f && f.link ? `<a class="btn btn-secondary btn-small" href="${f.link}" ${externalAttrs()}>${icon('external-link')}Abrir ${esc(f.airline)}</a>` : ''}
+      ${updatedText ? `<p class="live-updated">${updatedText}</p>` : ''}
+    </div>`;
+}
+
+function flightOf(seg) {
+  return Object.values(FLIGHTS).find((f) => f.segments.includes(seg));
+}
+
 function renderBoard(now) {
   const board = $('nextBoard');
+  const MILESTONES = buildMilestones();
   const index = MILESTONES.findIndex((m) => Date.parse(m.at) > now);
 
   if (index === -1) {
@@ -297,6 +392,7 @@ function renderBoard(now) {
       <div><strong>${pad(minutes)}</strong><span>min</span></div>
     </div>
     <p class="board-detail">${esc(next.detail)}</p>
+    ${next.flight ? livePanel(next.flight, flightOf(next.flight)) : ''}
     ${next.link ? `<a class="btn btn-secondary btn-small" href="${next.link}" ${externalAttrs()}>${icon('external-link')}${esc(next.linkLabel)}</a>` : ''}
     ${a ? `<p class="board-after">Después: <strong>${esc(after.title)}</strong>, ${shortDate(a).toLowerCase()} a las ${a.hm}</p>` : ''}`;
 }
@@ -444,6 +540,7 @@ function ticket(f) {
           <span class="leg-code">${s.from.code}</span>
           <span class="leg-city">${esc(s.from.city)}</span>
           ${dep.key !== first.key ? `<span class="leg-day">${shortDate(dep)}</span>` : ''}
+          ${s.dep !== s.base.dep ? `<span class="leg-was">Antes ${stamp(s.base.dep).hm}</span>` : ''}
         </div>
         <div class="leg-mid"><strong>${s.num}</strong>${icon('plane')}<span>${duration(arr.ms - dep.ms)}</span></div>
         <div class="leg-end right">
@@ -451,9 +548,11 @@ function ticket(f) {
           <span class="leg-code">${s.to.code}</span>
           <span class="leg-city">${esc(s.to.city)}</span>
           ${arr.key !== dep.key ? `<span class="leg-day">${shortDate(arr)}</span>` : ''}
+          ${s.arr !== s.base.arr ? `<span class="leg-was">Antes ${stamp(s.base.arr).hm}</span>` : ''}
         </div>
       </div>
-      ${s.op ? `<p class="leg-op">${esc(s.op)}</p>` : '<div class="leg-gap"></div>'}`;
+      ${s.op ? `<p class="leg-op">${esc(s.op)}</p>` : '<div class="leg-gap"></div>'}
+      <div class="leg-live">${livePanel(s, f)}</div>`;
   }).join('');
 
   return `
@@ -476,7 +575,7 @@ function ticket(f) {
 function renderTrip(now) {
   const stations = [
     { stage: 'aca', at: FLIGHTS.aca.segments[0].dep, title: 'Vuelo a Acapulco', body: () => ticket(FLIGHTS.aca) },
-    { stage: 'aca', at: '2026-11-07T14:28:00-06:00', title: 'Llegás a Acapulco', body: () => '<p class="station-text">Te quedás en lo de un amigo.</p>' },
+    { stage: 'aca', at: FLIGHTS.aca.segments[1].arr, title: 'Llegás a Acapulco', body: () => '<p class="station-text">Te quedás en lo de un amigo.</p>' },
     { stage: 'aca', at: FLIGHTS.vuelta.segments[0].dep, title: 'Vuelo de vuelta a Buenos Aires', body: () => ticket(FLIGHTS.vuelta) },
     { stage: 'aca', at: TRIP.end, title: 'Llegás a Ezeiza', terminal: true, body: () => '<p class="station-text">Fin del viaje.</p>' }
   ];
@@ -571,6 +670,7 @@ function bindEvents() {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
     renderTimeBased();
+    loadLive();
     const age = state.weather ? Date.now() - state.weather.fetchedAt : Infinity;
     if (age > 60 * 60 * 1000) loadWeather();
   });
@@ -607,11 +707,14 @@ function fillStaticIcons() {
 
 function init() {
   loadState();
+  applyLive();
   fillStaticIcons();
   bindEvents();
   renderAll();
   loadWeather();
+  loadLive();
   setInterval(renderTimeBased, 30000);
+  setInterval(loadLive, 5 * 60 * 1000);
   registerServiceWorker();
 }
 

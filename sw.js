@@ -4,14 +4,15 @@
    - Tipografía de Google: se guarda para que funcione sin conexión.
    - Pronóstico del clima: siempre de la red (la app guarda su propia copia). */
 
-const CACHE_NAME = 'nyc-trip-v12';
+const CACHE_NAME = 'nyc-trip-v13';
 const CORE = [
   './',
   './index.html',
-  './styles.css?v=12',
-  './icons.js?v=12',
-  './app.js?v=12',
+  './styles.css?v=13',
+  './icons.js?v=13',
+  './app.js?v=13',
   './manifest.json',
+  './live.json',
   './icon-192.png',
   './icon-512.png',
   './ny.jpg'
