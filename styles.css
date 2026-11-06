@@ -399,7 +399,7 @@ button.row { color: inherit; }
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   background: var(--surface);
   border-radius: var(--r-md);
 }
@@ -807,7 +807,7 @@ button.row { color: inherit; }
   width: 100%;
   max-width: var(--app-w);
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   background: #000;
   border-top: 1px solid #232323;
   padding-bottom: var(--safe-b);

@@ -3,19 +3,12 @@
 /* =========================================================
    NYC Trip 2026
    App estática (GitHub Pages). Los datos del viaje están
-   en este archivo; lo que cargás vos (lugares, gastos, notas)
-   se guarda en el navegador del celular (localStorage).
+   en este archivo.
    ========================================================= */
 
-/* ---------- Claves de almacenamiento (no cambiarlas: ahí están tus datos) ---------- */
+/* ---------- Almacenamiento: solo guarda el último pronóstico ---------- */
 
 const STORAGE = {
-  places: 'nycPlaces',
-  expenses: 'nycExpenses',
-  notes: 'nycNotes',
-  hotelInfo: 'nycHotelInfo',
-  flightInfo: 'nycFlightInfo',
-  expensePrefs: 'nycExpensePrefs',
   weather: 'nycWeatherCache'
 };
 
@@ -59,7 +52,7 @@ const FLIGHTS = {
       }
     ],
     facts: [
-      ['Equipaje', 'Solo equipaje de mano y artículo personal. Sin maleta en bodega'],
+      ['Equipaje', 'Una maleta en bodega, además del equipaje de mano y el artículo personal'],
       ['Asiento', 'Se asigna en el check‑in, o pagando para elegirlo'],
       ['Check‑in online', '24 h antes, en la app de American'],
       ['Condiciones', 'Embarcás en el último grupo. No admite cambios ni reembolsos']
@@ -114,23 +107,6 @@ const QUICK_LINKS = [
   { icon: 'plane', title: 'American Airlines', sub: 'Reserva DTKXEH', href: LINKS.american },
   { icon: 'plane', title: 'Aeroméxico', sub: 'Reserva KYYVFK', href: LINKS.aeromexico }
 ];
-
-/* Lista inicial de lugares: vacía. Lo que ya cargaste en el celular no se toca. */
-const DEFAULT_PLACES = [];
-
-const CURRENCIES = ['USD', 'ARS', 'MXN'];
-
-const CATEGORIES = [
-  { name: 'Comida', icon: 'utensils' },
-  { name: 'Transporte', icon: 'train-front' },
-  { name: 'Compras', icon: 'shopping-bag' },
-  { name: 'Entradas / atracciones', icon: 'ticket' },
-  { name: 'Hotel', icon: 'bed-double' },
-  { name: 'Vuelos', icon: 'plane' },
-  { name: 'Otros', icon: 'ellipsis' }
-];
-
-const PAYMENTS = ['Efectivo', 'Tarjeta', 'Débito', 'Otro'];
 
 /* ---------- Utilidades ---------- */
 
@@ -214,23 +190,6 @@ function duration(ms) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
-function money(amount, currency) {
-  const n = Math.round((Number(amount) || 0) * 100) / 100;
-  const opts = Number.isInteger(n)
-    ? { maximumFractionDigits: 0 }
-    : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-  return `${currency} ${new Intl.NumberFormat('es-AR', opts).format(n)}`;
-}
-
-/* Acepta "12,50", "1.500", "1.500,75" y "12.5". */
-function parseAmount(raw) {
-  let v = String(raw || '').trim().replace(/\s/g, '');
-  if (!v) return NaN;
-  if (v.includes(',')) v = v.replace(/\./g, '').replace(',', '.');
-  else if (/^\d{1,3}(\.\d{3})+$/.test(v)) v = v.replace(/\./g, '');
-  return Number(v);
-}
-
 function codeChip(label, code) {
   return `<button type="button" class="code-chip" data-copy="${esc(code)}" aria-label="Copiar ${esc(label.toLowerCase())} ${esc(code)}"><small>${esc(label)}</small><strong>${esc(code)}</strong>${icon('copy')}</button>`;
 }
@@ -242,36 +201,15 @@ function externalAttrs() {
 /* ---------- Estado ---------- */
 
 const state = {
-  places: [],
-  expenses: [],
-  notes: '',
-  hotelInfo: null,
-  flightInfo: null,
   weather: null,
   weatherError: false
 };
 
 const ui = {
-  weatherPlace: 'aca',
-  placeFilter: 'all',
-  catCurrency: null
+  weatherPlace: 'aca'
 };
 
 function loadState() {
-  const places = load(STORAGE.places, null);
-  state.places = Array.isArray(places) ? places : DEFAULT_PLACES.map((p) => ({ ...p }));
-
-  const expenses = load(STORAGE.expenses, []);
-  state.expenses = (Array.isArray(expenses) ? expenses : []).map((e) => ({
-    ...e,
-    amount: Number(e.amount) || 0,
-    currency: CURRENCIES.includes(e.currency) ? e.currency : 'USD'
-  }));
-
-  const notes = load(STORAGE.notes, '');
-  state.notes = typeof notes === 'string' ? notes : '';
-  state.hotelInfo = load(STORAGE.hotelInfo, null);
-  state.flightInfo = load(STORAGE.flightInfo, null);
   state.weather = load(STORAGE.weather, null);
 }
 
@@ -284,56 +222,6 @@ function toast(message) {
   el.classList.add('is-visible');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2200);
-}
-
-/* ---------- Hoja inferior ---------- */
-
-let sheetCloseTimer;
-let sheetReturnFocus = null;
-
-function openSheet(html) {
-  clearTimeout(sheetCloseTimer);
-  const sheet = $('sheet');
-  const backdrop = $('sheetBackdrop');
-  if (sheet.hidden) sheetReturnFocus = document.activeElement;
-  $('sheetBody').innerHTML = html;
-  sheet.hidden = false;
-  backdrop.hidden = false;
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    sheet.classList.add('is-open');
-    backdrop.classList.add('is-open');
-  });
-  const first = sheet.querySelector('[data-autofocus]') || sheet.querySelector('button, input, select, textarea');
-  if (first) setTimeout(() => first.focus({ preventScroll: true }), 80);
-}
-
-function closeSheet() {
-  const sheet = $('sheet');
-  const backdrop = $('sheetBackdrop');
-  if (sheet.hidden) return;
-  sheet.classList.remove('is-open');
-  backdrop.classList.remove('is-open');
-  document.body.style.overflow = '';
-  sheetCloseTimer = setTimeout(() => {
-    sheet.hidden = true;
-    backdrop.hidden = true;
-    $('sheetBody').innerHTML = '';
-  }, 260);
-  if (sheetReturnFocus && document.contains(sheetReturnFocus)) sheetReturnFocus.focus({ preventScroll: true });
-  sheetReturnFocus = null;
-}
-
-let confirmAction = null;
-function confirmSheet({ title, text, confirmLabel, onConfirm }) {
-  confirmAction = onConfirm;
-  openSheet(`
-    <h2 id="sheetTitle">${esc(title)}</h2>
-    <p class="sheet-text">${esc(text)}</p>
-    <div class="sheet-actions">
-      <button type="button" class="btn btn-primary btn-block" data-action="confirm" data-autofocus>${esc(confirmLabel)}</button>
-      <button type="button" class="btn btn-ghost btn-block" data-action="close-sheet">Cancelar</button>
-    </div>`);
 }
 
 /* ---------- Navegación ---------- */
@@ -413,14 +301,6 @@ function renderBoard(now) {
     ${a ? `<p class="board-after">Después: <strong>${esc(after.title)}</strong>, ${shortDate(a).toLowerCase()} a las ${a.hm}</p>` : ''}`;
 }
 
-function totalsByCurrency() {
-  const totals = {};
-  state.expenses.forEach((e) => {
-    totals[e.currency] = (totals[e.currency] || 0) + e.amount;
-  });
-  return CURRENCIES.filter((c) => totals[c]).map((c) => ({ currency: c, amount: totals[c] }));
-}
-
 function renderStats(now) {
   let tripStat;
   if (now < Date.parse(TRIP.start)) {
@@ -432,15 +312,8 @@ function renderStats(now) {
     tripStat = { value: TRIP.totalDays, label: 'Días de viaje' };
   }
 
-  const visited = state.places.filter((p) => p.visited).length;
-  const totals = totalsByCurrency();
-  const main = totals.find((t) => t.currency === 'USD') || totals[0];
-  const others = totals.filter((t) => t !== main).map((t) => money(t.amount, t.currency));
-
   $('stats').innerHTML = `
-    <div class="stat"><span class="stat-value">${tripStat.value}</span><span class="stat-label">${tripStat.label}</span></div>
-    <div class="stat"><span class="stat-value">${visited} de ${state.places.length}</span><span class="stat-label">Lugares visitados</span></div>
-    <div class="stat"><span class="stat-value">${main ? money(main.amount, main.currency) : 'USD 0'}</span><span class="stat-label">Gastado</span>${others.length ? `<span class="stat-extra">+ ${others.join(' + ')}</span>` : ''}</div>`;
+    <div class="stat"><span class="stat-value">${tripStat.value}</span><span class="stat-label">${tripStat.label}</span></div>`;
 }
 
 /* Clima */
@@ -652,404 +525,6 @@ function renderTrip(now) {
     </div>`;
 }
 
-/* ---------- LUGARES ---------- */
-
-function mapsUrl(place) {
-  const area = place.category === 'Acapulco' ? 'Acapulco, Guerrero'
-    : place.category === 'New Jersey' ? 'New Jersey'
-    : 'New York, NY';
-  const query = place.name.toLowerCase().includes(area.split(',')[0].toLowerCase()) ? place.name : `${place.name}, ${area}`;
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-}
-
-function savePlaces() {
-  save(STORAGE.places, state.places);
-}
-
-function renderPlaces() {
-  const total = state.places.length;
-  const visited = state.places.filter((p) => p.visited).length;
-  $('placesContext').textContent = total ? `${visited} de ${total} visitados` : 'Tu lista de lugares';
-  $('placeProgress').style.width = `${total ? Math.round((visited / total) * 100) : 0}%`;
-
-  document.querySelectorAll('#placeFilter button').forEach((b) => {
-    b.setAttribute('aria-selected', String(b.dataset.filter === ui.placeFilter));
-  });
-
-  const list = state.places.filter((p) => (
-    ui.placeFilter === 'all' || (ui.placeFilter === 'visited' ? p.visited : !p.visited)
-  ));
-
-  if (!list.length) {
-    const msg = !total ? 'Todavía no hay lugares. Agregá el primero arriba.'
-      : ui.placeFilter === 'pending' ? 'No te queda ninguno pendiente.'
-      : 'Todavía no marcaste ninguno como visitado.';
-    $('placesList').innerHTML = `<li class="empty">${msg}</li>`;
-    return;
-  }
-
-  $('placesList').innerHTML = list.map((p) => `
-    <li class="place-row${p.visited ? ' is-visited' : ''}">
-      <button type="button" class="check" data-action="toggle-place" data-id="${esc(p.id)}" aria-pressed="${p.visited}" aria-label="${p.visited ? 'Desmarcar' : 'Marcar'} ${esc(p.name)} como visitado"><span>${icon('check')}</span></button>
-      <div class="row-main"><span class="row-title">${esc(p.name)}</span><span class="row-sub">${esc(p.category)}</span></div>
-      <a class="icon-btn" href="${mapsUrl(p)}" ${externalAttrs()} aria-label="Ver ${esc(p.name)} en Google Maps">${icon('map')}</a>
-      <button type="button" class="icon-btn" data-action="delete-place" data-id="${esc(p.id)}" aria-label="Borrar ${esc(p.name)}">${icon('trash-2')}</button>
-    </li>`).join('');
-}
-
-function addPlace(event) {
-  event.preventDefault();
-  const input = $('placeName');
-  const name = input.value.trim();
-  if (!name) {
-    input.focus();
-    return;
-  }
-  state.places.push({ id: `place-${Date.now()}`, name, category: $('placeCategory').value, visited: false, custom: true });
-  savePlaces();
-  input.value = '';
-  if (ui.placeFilter === 'visited') ui.placeFilter = 'all';
-  renderPlaces();
-  renderStats(Date.now());
-  toast('Lugar agregado');
-}
-
-function togglePlace(id) {
-  const place = state.places.find((p) => p.id === id);
-  if (!place) return;
-  place.visited = !place.visited;
-  savePlaces();
-  renderPlaces();
-  renderStats(Date.now());
-}
-
-function deletePlace(id) {
-  const place = state.places.find((p) => p.id === id);
-  if (!place) return;
-  confirmSheet({
-    title: `¿Borrar ${place.name}?`,
-    text: 'Se quita de tu lista de lugares.',
-    confirmLabel: 'Borrar lugar',
-    onConfirm: () => {
-      state.places = state.places.filter((p) => p.id !== id);
-      savePlaces();
-      renderPlaces();
-      renderStats(Date.now());
-      toast('Lugar borrado');
-    }
-  });
-}
-
-/* ---------- GASTOS ---------- */
-
-function categoryIcon(name) {
-  const c = CATEGORIES.find((x) => x.name === name);
-  return c ? c.icon : 'ellipsis';
-}
-
-function saveExpenses() {
-  save(STORAGE.expenses, state.expenses);
-}
-
-function renderExpenses() {
-  const totals = totalsByCurrency();
-  const count = state.expenses.length;
-  $('expensesContext').textContent = count ? `${count} ${count === 1 ? 'gasto cargado' : 'gastos cargados'}` : 'Todavía no cargaste gastos';
-
-  if (!totals.length) {
-    $('expenseTotals').innerHTML = '<div class="total is-main"><span>Total gastado</span><strong>USD 0</strong></div>';
-  } else {
-    const ordered = [...totals].sort((a, b) => (a.currency === 'USD' ? -1 : b.currency === 'USD' ? 1 : 0));
-    $('expenseTotals').innerHTML = ordered.map((t, i) => `
-      <div class="total${i === 0 ? ' is-main' : ''}"><span>Total en ${t.currency}</span><strong>${money(t.amount, t.currency)}</strong></div>`).join('');
-  }
-
-  // Por categoría, separado por moneda
-  const used = totals.map((t) => t.currency);
-  $('categoryBlock').hidden = !count;
-  if (count) {
-    if (!used.includes(ui.catCurrency)) ui.catCurrency = used.includes('USD') ? 'USD' : used[0];
-    $('categoryCurrency').innerHTML = used.length > 1
-      ? used.map((c) => `<button type="button" role="tab" data-currency="${c}" aria-selected="${c === ui.catCurrency}">${c}</button>`).join('')
-      : '';
-    $('categoryCurrency').hidden = used.length < 2;
-
-    const byCat = {};
-    state.expenses.filter((e) => e.currency === ui.catCurrency).forEach((e) => {
-      byCat[e.category] = (byCat[e.category] || 0) + e.amount;
-    });
-    const rows = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
-    const max = rows.length ? rows[0][1] : 1;
-    $('categoryBars').innerHTML = rows.map(([cat, amount]) => `
-      <div>
-        <div class="bar-top"><span>${esc(cat)}</span><strong>${money(amount, ui.catCurrency)}</strong></div>
-        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, Math.round((amount / max) * 100))}%"></div></div>
-      </div>`).join('');
-  }
-
-  // Lista agrupada por día
-  if (!count) {
-    $('expenseList').innerHTML = '<p class="empty">Tocá “Agregar gasto” para cargar el primero.</p>';
-    return;
-  }
-
-  const groups = {};
-  state.expenses.forEach((e) => {
-    const key = e.date || 'sin-fecha';
-    (groups[key] = groups[key] || []).push(e);
-  });
-
-  $('expenseList').innerHTML = Object.keys(groups).sort().reverse().map((key) => {
-    const items = groups[key].slice().reverse();
-    const sums = {};
-    items.forEach((e) => { sums[e.currency] = (sums[e.currency] || 0) + e.amount; });
-    const sumText = CURRENCIES.filter((c) => sums[c]).map((c) => money(sums[c], c)).join(' + ');
-    const title = /^\d{4}-\d{2}-\d{2}$/.test(key) ? longDate(dayParts(key)) : 'Sin fecha';
-    return `
-      <section class="day-group">
-        <div class="day-head"><h3>${title}</h3><span>${sumText}</span></div>
-        <ul class="list">
-          ${items.map((e) => {
-            const sub = [e.category, e.payment, e.reference ? `Ref. ${e.reference}` : ''].filter(Boolean).join(', ');
-            return `
-              <li>
-                <button type="button" class="row" data-action="edit-expense" data-id="${esc(e.id)}" aria-label="Editar ${esc(e.concept)}, ${money(e.amount, e.currency)}">
-                  <span class="row-icon">${icon(categoryIcon(e.category))}</span>
-                  <span class="row-main"><span class="row-title">${esc(e.concept)}</span><span class="row-sub">${esc(sub)}</span></span>
-                  <span class="amount">${money(e.amount, e.currency).replace(`${e.currency} `, '')}<small>${e.currency}</small></span>
-                </button>
-              </li>`;
-          }).join('')}
-        </ul>
-      </section>`;
-  }).join('');
-}
-
-function openExpenseSheet(id) {
-  const existing = id ? state.expenses.find((e) => e.id === id) : null;
-  const prefs = load(STORAGE.expensePrefs, {}) || {};
-  const data = existing || {
-    date: todayKey(),
-    concept: '',
-    category: 'Comida',
-    amount: '',
-    currency: CURRENCIES.includes(prefs.currency) ? prefs.currency : 'USD',
-    payment: PAYMENTS.includes(prefs.payment) ? prefs.payment : 'Tarjeta',
-    reference: ''
-  };
-  const amountValue = existing ? String(existing.amount).replace('.', ',') : '';
-
-  openSheet(`
-    <h2 id="sheetTitle">${existing ? 'Editar gasto' : 'Nuevo gasto'}</h2>
-    <form class="form" id="expenseForm" novalidate data-id="${existing ? esc(existing.id) : ''}">
-      <div class="field">
-        <label for="exAmount">Monto</label>
-        <div class="amount-input">
-          <input id="exAmount" type="text" inputmode="decimal" placeholder="0" value="${esc(amountValue)}" autocomplete="off" data-autofocus />
-          <div class="segmented" role="radiogroup" aria-label="Moneda" data-group="currency">
-            ${CURRENCIES.map((c) => `<button type="button" role="radio" data-value="${c}" aria-checked="${c === data.currency}">${c}</button>`).join('')}
-          </div>
-        </div>
-        <p class="error" id="exAmountError"></p>
-      </div>
-      <div class="field">
-        <label for="exConcept">Concepto</label>
-        <input id="exConcept" type="text" placeholder="Ej: cena en Chinatown" value="${esc(data.concept)}" autocomplete="off" />
-        <p class="error" id="exConceptError"></p>
-      </div>
-      <div class="field">
-        <span class="field-label" id="exCategoryLabel">Categoría</span>
-        <div class="chips" role="radiogroup" aria-labelledby="exCategoryLabel" data-group="category">
-          ${CATEGORIES.map((c) => `<button type="button" class="chip" role="radio" data-value="${esc(c.name)}" aria-checked="${c.name === data.category}">${icon(c.icon)}${esc(c.name)}</button>`).join('')}
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="exDate">Fecha</label>
-          <input id="exDate" type="date" value="${esc(data.date)}" />
-        </div>
-        <div class="field">
-          <label for="exPayment">Pago</label>
-          <select id="exPayment">
-            ${PAYMENTS.map((p) => `<option value="${p}"${p === data.payment ? ' selected' : ''}>${p}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="exRef">Referencia (opcional)</label>
-        <input id="exRef" type="text" placeholder="Código de reserva, voucher…" value="${esc(data.reference || '')}" autocomplete="off" />
-      </div>
-      <div class="sheet-actions">
-        <button type="submit" class="btn btn-primary btn-block">Guardar gasto</button>
-        ${existing ? `<button type="button" class="btn btn-danger btn-block" data-action="delete-expense" data-id="${esc(existing.id)}">${icon('trash-2')}Borrar gasto</button>` : ''}
-        <button type="button" class="btn btn-ghost btn-block" data-action="close-sheet">Cancelar</button>
-      </div>
-    </form>`);
-}
-
-function groupValue(form, group) {
-  const selected = form.querySelector(`[data-group="${group}"] [aria-checked="true"]`);
-  return selected ? selected.dataset.value : null;
-}
-
-function submitExpense(form) {
-  const amount = parseAmount($('exAmount').value);
-  const concept = $('exConcept').value.trim();
-  let valid = true;
-
-  $('exAmountError').textContent = '';
-  $('exConceptError').textContent = '';
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    $('exAmountError').textContent = 'Ingresá un monto mayor a 0.';
-    valid = false;
-  }
-  if (!concept) {
-    $('exConceptError').textContent = 'Escribí en qué gastaste.';
-    valid = false;
-  }
-  if (!valid) {
-    (Number.isFinite(amount) && amount > 0 ? $('exConcept') : $('exAmount')).focus();
-    return;
-  }
-
-  const values = {
-    amount: Math.round(amount * 100) / 100,
-    currency: groupValue(form, 'currency') || 'USD',
-    concept,
-    category: groupValue(form, 'category') || 'Otros',
-    date: $('exDate').value || todayKey(),
-    payment: $('exPayment').value,
-    reference: $('exRef').value.trim()
-  };
-
-  const id = form.dataset.id;
-  if (id) {
-    const expense = state.expenses.find((e) => e.id === id);
-    if (expense) Object.assign(expense, values);
-  } else {
-    state.expenses.push({ id: `expense-${Date.now()}`, ...values });
-  }
-
-  saveExpenses();
-  save(STORAGE.expensePrefs, { currency: values.currency, payment: values.payment });
-  closeSheet();
-  renderExpenses();
-  renderStats(Date.now());
-  toast(id ? 'Gasto actualizado' : 'Gasto guardado');
-}
-
-function deleteExpense(id) {
-  const expense = state.expenses.find((e) => e.id === id);
-  if (!expense) return;
-  confirmSheet({
-    title: '¿Borrar este gasto?',
-    text: `${expense.concept}, ${money(expense.amount, expense.currency)}.`,
-    confirmLabel: 'Borrar gasto',
-    onConfirm: () => {
-      state.expenses = state.expenses.filter((e) => e.id !== id);
-      saveExpenses();
-      renderExpenses();
-      renderStats(Date.now());
-      toast('Gasto borrado');
-    }
-  });
-}
-
-/* ---------- NOTAS ---------- */
-
-let notesTimer;
-function handleNotesInput() {
-  $('notesStatus').textContent = 'Guardando…';
-  clearTimeout(notesTimer);
-  notesTimer = setTimeout(saveNotes, 600);
-}
-
-function saveNotes() {
-  clearTimeout(notesTimer);
-  state.notes = $('tripNotes').value;
-  if (save(STORAGE.notes, state.notes)) $('notesStatus').textContent = 'Guardado';
-}
-
-function renderVouchers() {
-  const items = [
-    { label: 'Hotel', info: state.hotelInfo },
-    { label: 'Vuelo', info: state.flightInfo }
-  ].filter((v) => v.info && (v.info.reference || v.info.notes || v.info.amount));
-
-  $('vouchersBlock').hidden = !items.length;
-  $('vouchersList').innerHTML = items.map((v) => {
-    const parts = [];
-    if (v.info.reference) parts.push(`Ref. ${v.info.reference}`);
-    if (v.info.notes) parts.push(v.info.notes);
-    if (v.info.amount) parts.push(money(v.info.amount, v.info.currency || 'USD'));
-    return `<li><div class="row"><span class="row-icon">${icon(v.label === 'Hotel' ? 'bed-double' : 'plane')}</span><span class="row-main"><span class="row-title">${v.label}</span><span class="row-sub">${esc(parts.join('. '))}</span></span></div></li>`;
-  }).join('');
-}
-
-/* Copia de seguridad */
-
-function exportData() {
-  const payload = {
-    app: 'nyc-trip',
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    data: {
-      places: state.places,
-      expenses: state.expenses,
-      notes: state.notes,
-      hotelInfo: state.hotelInfo,
-      flightInfo: state.flightInfo
-    }
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `nyc-trip-copia-${todayKey()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
-  toast('Copia descargada');
-}
-
-function importData(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    let payload;
-    try {
-      payload = JSON.parse(reader.result);
-    } catch (error) {
-      payload = null;
-    }
-    const d = payload && payload.app === 'nyc-trip' ? payload.data : null;
-    if (!d || !Array.isArray(d.places) || !Array.isArray(d.expenses)) {
-      toast('Ese archivo no es una copia de esta app');
-      return;
-    }
-    const when = payload.exportedAt ? new Date(payload.exportedAt) : null;
-    const whenText = when && !Number.isNaN(when.getTime()) ? `del ${when.getDate()}/${when.getMonth() + 1}` : 'elegida';
-    confirmSheet({
-      title: 'Restaurar copia',
-      text: `La copia ${whenText} tiene ${d.places.length} lugares y ${d.expenses.length} gastos. Reemplaza lo que tenés ahora en este celular.`,
-      confirmLabel: 'Restaurar copia',
-      onConfirm: () => {
-        save(STORAGE.places, d.places);
-        save(STORAGE.expenses, d.expenses);
-        save(STORAGE.notes, typeof d.notes === 'string' ? d.notes : '');
-        if (d.hotelInfo) save(STORAGE.hotelInfo, d.hotelInfo);
-        if (d.flightInfo) save(STORAGE.flightInfo, d.flightInfo);
-        loadState();
-        $('tripNotes').value = state.notes;
-        renderAll();
-        toast('Copia restaurada');
-      }
-    });
-  };
-  reader.readAsText(file);
-}
-
 /* ---------- Render general ---------- */
 
 function renderTimeBased() {
@@ -1064,9 +539,6 @@ function renderAll() {
   renderTimeBased();
   renderWeather();
   renderQuickLinks();
-  renderPlaces();
-  renderExpenses();
-  renderVouchers();
 }
 
 /* ---------- Eventos ---------- */
@@ -1074,37 +546,6 @@ function renderAll() {
 function bindEvents() {
   document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', () => setScreen(tab.dataset.target));
-  });
-
-  $('placeFilter').addEventListener('click', (e) => {
-    const b = e.target.closest('button[data-filter]');
-    if (!b) return;
-    ui.placeFilter = b.dataset.filter;
-    renderPlaces();
-  });
-
-  $('categoryCurrency').addEventListener('click', (e) => {
-    const b = e.target.closest('button[data-currency]');
-    if (!b) return;
-    ui.catCurrency = b.dataset.currency;
-    renderExpenses();
-  });
-
-  $('placeForm').addEventListener('submit', addPlace);
-  $('addExpenseBtn').addEventListener('click', () => openExpenseSheet(null));
-  $('tripNotes').addEventListener('input', handleNotesInput);
-  $('tripNotes').addEventListener('blur', saveNotes);
-  $('exportBtn').addEventListener('click', exportData);
-  $('importBtn').addEventListener('click', () => $('importFile').click());
-  $('importFile').addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) importData(file);
-    e.target.value = '';
-  });
-
-  $('sheetBackdrop').addEventListener('click', closeSheet);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeSheet();
   });
 
   // Acciones con delegación
@@ -1124,41 +565,6 @@ function bindEvents() {
       }
       toast(`Copiado: ${code}`);
       return;
-    }
-
-    const radio = e.target.closest('[role="radio"]');
-    if (radio && radio.closest('[data-group]')) {
-      radio.closest('[data-group]').querySelectorAll('[role="radio"]').forEach((r) => {
-        r.setAttribute('aria-checked', String(r === radio));
-      });
-      return;
-    }
-
-    const actionEl = e.target.closest('[data-action]');
-    if (!actionEl) return;
-    const { action, id } = actionEl.dataset;
-    if (action === 'toggle-place') togglePlace(id);
-    if (action === 'delete-place') deletePlace(id);
-    if (action === 'edit-expense') openExpenseSheet(id);
-    if (action === 'delete-expense') deleteExpense(id);
-    if (action === 'close-sheet') closeSheet();
-    if (action === 'confirm') {
-      const fn = confirmAction;
-      confirmAction = null;
-      closeSheet();
-      if (fn) fn();
-    }
-  });
-
-  document.addEventListener('input', (e) => {
-    if (e.target.id === 'exAmount') $('exAmountError').textContent = '';
-    if (e.target.id === 'exConcept') $('exConceptError').textContent = '';
-  });
-
-  document.addEventListener('submit', (e) => {
-    if (e.target.id === 'expenseForm') {
-      e.preventDefault();
-      submitExpense(e.target);
     }
   });
 
@@ -1197,16 +603,11 @@ function fillStaticIcons() {
   document.querySelectorAll('[data-icon]').forEach((el) => {
     el.outerHTML = icon(el.dataset.icon);
   });
-  $('addPlaceBtn').innerHTML = icon('plus');
-  $('addExpenseBtn').innerHTML = `${icon('plus')}Agregar gasto`;
-  $('exportBtn').innerHTML = `${icon('download')}Bajar copia`;
-  $('importBtn').innerHTML = `${icon('upload')}Restaurar copia`;
 }
 
 function init() {
   loadState();
   fillStaticIcons();
-  $('tripNotes').value = state.notes;
   bindEvents();
   renderAll();
   loadWeather();
