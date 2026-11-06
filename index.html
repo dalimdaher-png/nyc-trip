@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NYC Trip 2026</title>
-  <meta name="description" content="Tu viaje a Nueva York y Acapulco: vuelos, hotel, lugares, gastos y notas." />
+  <meta name="description" content="Tu viaje a Acapulco: vuelos, lugares, gastos y notas." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=11" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -33,8 +33,8 @@
           <div class="hero">
             <div class="hero-text">
               <p class="hero-title">NYC Trip 2026</p>
-              <p class="hero-dates">29 oct al 14 nov</p>
-              <p class="hero-places">Nueva York y Acapulco, con Halloween en Manhattan</p>
+              <p class="hero-dates">6 al 14 nov</p>
+              <p class="hero-places">Acapulco, con la vuelta por Ciudad de México</p>
             </div>
             <p class="hero-status" id="heroStatus"></p>
           </div>
@@ -47,8 +47,7 @@
             <div class="block-head">
               <h2 id="weather-title">Clima</h2>
               <div class="segmented" role="tablist" aria-label="Ciudad del pronóstico" id="weatherTabs">
-                <button type="button" role="tab" data-place="nyc" aria-selected="true">Nueva York</button>
-                <button type="button" role="tab" data-place="aca" aria-selected="false">Acapulco</button>
+                <button type="button" role="tab" data-place="aca" aria-selected="true">Acapulco</button>
               </div>
             </div>
             <div class="weather-days" id="weatherDays"></div>
@@ -66,7 +65,7 @@
       <section class="screen" id="viaje" aria-labelledby="viaje-title">
         <header class="sign">
           <h1 id="viaje-title">Viaje</h1>
-          <p class="sign-context">17 días, 3 vuelos, 2 ciudades</p>
+          <p class="sign-context">9 días, 2 vuelos, Acapulco</p>
         </header>
         <div class="page" id="tripLine"></div>
       </section>
@@ -83,13 +82,13 @@
             <input id="placeName" type="text" placeholder="Agregar un lugar" enterkeyhint="done" />
             <label class="sr-only" for="placeCategory">Zona</label>
             <select id="placeCategory">
+              <option value="Acapulco">Acapulco</option>
               <option value="Manhattan">Manhattan</option>
               <option value="Brooklyn">Brooklyn</option>
               <option value="New Jersey">New Jersey</option>
               <option value="Mirador">Mirador</option>
               <option value="Parque">Parque</option>
               <option value="Halloween">Halloween</option>
-              <option value="Acapulco">Acapulco</option>
               <option value="Otro">Otro</option>
             </select>
             <button type="submit" class="btn btn-primary btn-icon" aria-label="Agregar lugar" id="addPlaceBtn"></button>
@@ -179,7 +178,7 @@
     <button type="button" class="btn btn-small btn-primary" id="updateBtn">Actualizar</button>
   </div>
 
-  <script src="icons.js?v=10"></script>
-  <script src="app.js?v=10"></script>
+  <script src="icons.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

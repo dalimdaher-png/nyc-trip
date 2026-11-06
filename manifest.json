@@ -1,7 +1,7 @@
 {
   "name": "NYC Trip 2026",
   "short_name": "NYC Trip",
-  "description": "Tu viaje a Nueva York y Acapulco: vuelos, hotel, lugares, gastos y notas.",
+  "description": "Tu viaje a Acapulco: vuelos, lugares, gastos y notas.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

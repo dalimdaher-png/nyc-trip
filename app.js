@@ -24,73 +24,18 @@ const STORAGE = {
    las cuentas regresivas funcionan desde cualquier país. */
 
 const TRIP = {
-  start: '2026-10-29T16:50:00-03:00',
+  start: '2026-11-06T19:29:00-05:00',
   end: '2026-11-14T21:50:00-03:00',
-  totalDays: 17,
+  totalDays: 9,
   agencyRef: '25439634673'
 };
 
-const HOTEL_ADDRESS = 'Tribeca Hotel FiDi, 102 Greenwich St, New York, NY 10006';
-
 const LINKS = {
-  hotelMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(HOTEL_ADDRESS)}`,
-  toHotel: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(HOTEL_ADDRESS)}&travelmode=transit`,
-  jfkToHotel: `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent('JFK Airport, Queens, NY')}&destination=${encodeURIComponent(HOTEL_ADDRESS)}&travelmode=transit`,
-  hotelToJfk: `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(HOTEL_ADDRESS)}&destination=${encodeURIComponent('JFK Terminal 8, Queens, NY')}&travelmode=transit`,
-  omny: 'https://omny.info/',
-  avianca: 'https://www.avianca.com/',
   american: 'https://www.aa.com/',
-  aeromexico: 'https://aeromexico.com/',
-  booking: 'https://www.booking.com/'
-};
-
-const HOTEL = {
-  name: 'Tribeca Hotel FiDi',
-  address: '102 Greenwich Street, New York, NY 10006',
-  phone: '+1 212-233-6701',
-  checkInDay: 'Vie 30 oct',
-  checkInHours: 'desde las 15:00',
-  checkOutDay: 'Vie 6 nov',
-  checkOutHours: 'de 8:00 a 11:00',
-  room: 'Suite con cama grande, 1 adulto, 7 noches',
-  meals: 'No incluidas',
-  guestName: 'Marcelo Daher Dalila Nahir',
-  payment: 'USD 2.308,49, ya pagado (29/9)',
-  freeCancelUntil: '2026-10-28T23:59:00-04:00',
-  cancelFee: 'USD 429,78',
-  confirmation: '6691299516',
-  pin: '3903'
+  aeromexico: 'https://aeromexico.com/'
 };
 
 const FLIGHTS = {
-  ida: {
-    airline: 'Avianca',
-    fare: 'Tarifa Light',
-    ref: 'AO8XTJ',
-    segments: [
-      {
-        num: 'AV 8396',
-        op: 'Operado por Avianca Ecuador S.A., Airbus A320neo',
-        from: { code: 'EZE', city: 'Buenos Aires' },
-        to: { code: 'BOG', city: 'Bogotá' },
-        dep: '2026-10-29T16:50:00-03:00',
-        arr: '2026-10-29T21:30:00-05:00'
-      },
-      {
-        num: 'AV 20',
-        op: 'Operado por Avianca, Airbus A320neo',
-        from: { code: 'BOG', city: 'Bogotá' },
-        to: { code: 'JFK', city: 'Nueva York' },
-        dep: '2026-10-29T23:05:00-05:00',
-        arr: '2026-10-30T06:00:00-04:00'
-      }
-    ],
-    facts: [
-      ['Equipaje', 'Artículo personal, equipaje de mano de 10 kg y una maleta de 23 kg en bodega'],
-      ['Asiento', 'Sin elegir'],
-      ['Check‑in online', 'Se habilita 48 h antes, en avianca.com o la app']
-    ]
-  },
   aca: {
     airline: 'American Airlines',
     fare: 'Basic Economy',
@@ -151,14 +96,8 @@ const FLIGHTS = {
 
 /* Hitos que alimentan la tarjeta "Próximo" de la pantalla Hoy. */
 const MILESTONES = [
-  { at: '2026-10-27T16:50:00-03:00', place: 'Buenos Aires', title: 'Se habilita el check‑in de Avianca', detail: 'Hacelo en avianca.com o en la app con la reserva AO8XTJ.', link: LINKS.avianca, linkLabel: 'Ir a Avianca' },
-  { at: '2026-10-29T16:50:00-03:00', place: 'Buenos Aires', title: 'Vuelo a Nueva York', detail: 'AV 8396 sale de Ezeiza a las 16:50, con escala en Bogotá.' },
-  { at: '2026-10-29T23:05:00-05:00', place: 'Bogotá', title: 'Conexión en Bogotá', detail: 'AV 20 sale a las 23:05 hacia JFK.' },
-  { at: '2026-10-30T06:00:00-04:00', place: 'Nueva York', title: 'Llegada a Nueva York', detail: 'Aterrizás en JFK a las 06:00. Al hotel en subte, pagando con OMNY.', link: LINKS.jfkToHotel, linkLabel: 'Ver ruta al hotel' },
-  { at: '2026-10-30T15:00:00-04:00', place: 'Nueva York', title: 'Check‑in en el hotel', detail: 'Tribeca Hotel FiDi, desde las 15:00. Llevá documento y tarjeta de crédito.' },
   { at: '2026-11-05T19:29:00-05:00', place: 'Nueva York', title: 'Se habilita el check‑in de American', detail: 'En la app de American, 24 h antes del vuelo. Reserva DTKXEH.', link: LINKS.american, linkLabel: 'Ir a American' },
-  { at: '2026-11-06T11:00:00-05:00', place: 'Nueva York', title: 'Check‑out del hotel', detail: 'Tenés hasta las 11:00. El vuelo sale a las 19:29 de JFK Terminal 8.' },
-  { at: '2026-11-06T19:29:00-05:00', place: 'Nueva York', title: 'Vuelo a Acapulco', detail: 'AA 1892 sale de JFK Terminal 8 a las 19:29. Pasás la noche en Dallas.', link: LINKS.hotelToJfk, linkLabel: 'Ruta del hotel a JFK' },
+  { at: '2026-11-06T19:29:00-05:00', place: 'Nueva York', title: 'Vuelo a Acapulco', detail: 'AA 1892 sale de JFK Terminal 8 a las 19:29. Pasás la noche en Dallas.' },
   { at: '2026-11-07T11:23:00-06:00', place: 'Dallas', title: 'Conexión en Dallas', detail: 'AA 3740 sale a las 11:23 hacia Acapulco.' },
   { at: '2026-11-07T14:28:00-06:00', place: 'Acapulco', title: 'Llegada a Acapulco', detail: 'Aterrizás a las 14:28. Te quedás en lo de un amigo.' },
   { at: '2026-11-13T19:06:00-06:00', place: 'Acapulco', title: 'Vuelo a Buenos Aires', detail: 'AM 307 sale a las 19:06. Pasás la noche en Ciudad de México.' },
@@ -166,31 +105,18 @@ const MILESTONES = [
   { at: '2026-11-14T21:50:00-03:00', place: 'Buenos Aires', title: 'Llegada a Buenos Aires', detail: 'Aterrizás en Ezeiza a las 21:50.' }
 ];
 
-/* Pronóstico: cada ciudad muestra solo los días que vas a estar ahí. */
+/* Pronóstico: muestra solo los días que vas a estar en cada ciudad. */
 const WEATHER_PLACES = {
-  nyc: { name: 'Nueva York', lat: 40.7086, lon: -74.0123, tz: 'America/New_York', from: '2026-10-30', to: '2026-11-06' },
   aca: { name: 'Acapulco', lat: 16.8531, lon: -99.8237, tz: 'America/Mexico_City', from: '2026-11-07', to: '2026-11-13' }
 };
 
 const QUICK_LINKS = [
-  { icon: 'route', title: 'Cómo llegar al hotel', sub: 'Google Maps en transporte público', href: LINKS.toHotel },
-  { icon: 'bed-double', title: 'Tribeca Hotel FiDi', sub: '102 Greenwich Street', href: LINKS.hotelMap },
-  { icon: 'train-front', title: 'OMNY y subte', sub: 'Pagás con tarjeta contactless o el celular', href: LINKS.omny },
-  { icon: 'plane', title: 'Avianca', sub: 'Reserva AO8XTJ', href: LINKS.avianca },
   { icon: 'plane', title: 'American Airlines', sub: 'Reserva DTKXEH', href: LINKS.american },
-  { icon: 'plane', title: 'Aeroméxico', sub: 'Reserva KYYVFK', href: LINKS.aeromexico },
-  { icon: 'bed-double', title: 'Booking.com', sub: 'Reserva 6691299516', href: LINKS.booking }
+  { icon: 'plane', title: 'Aeroméxico', sub: 'Reserva KYYVFK', href: LINKS.aeromexico }
 ];
 
-const DEFAULT_PLACES = [
-  { id: 'downtown', name: 'Downtown / Financial District', category: 'Manhattan', visited: false, custom: false },
-  { id: 'newjersey', name: 'New Jersey', category: 'New Jersey', visited: false, custom: false },
-  { id: 'centralpark', name: 'Central Park', category: 'Parque', visited: false, custom: false },
-  { id: 'timessquare', name: 'Times Square', category: 'Manhattan', visited: false, custom: false },
-  { id: 'rockefeller', name: 'Rockefeller Center', category: 'Manhattan', visited: false, custom: false },
-  { id: 'edge', name: 'Edge', category: 'Mirador', visited: false, custom: false },
-  { id: 'brooklyn', name: 'Brooklyn', category: 'Brooklyn', visited: false, custom: false }
-];
+/* Lista inicial de lugares: vacía. Lo que ya cargaste en el celular no se toca. */
+const DEFAULT_PLACES = [];
 
 const CURRENCIES = ['USD', 'ARS', 'MXN'];
 
@@ -326,7 +252,7 @@ const state = {
 };
 
 const ui = {
-  weatherPlace: Date.now() >= Date.parse('2026-11-06T19:29:00-05:00') ? 'aca' : 'nyc',
+  weatherPlace: 'aca',
   placeFilter: 'all',
   catCurrency: null
 };
@@ -428,15 +354,10 @@ function setScreen(id) {
 function phase(now) {
   const t = Date.parse;
   if (now < t(TRIP.start)) {
-    const days = calendarDaysBetween(todayKey(), '2026-10-29');
-    if (days <= 0) return { text: 'Hoy viajás', stage: 'nyc' };
-    if (days === 1) return { text: 'Mañana viajás', stage: 'nyc' };
-    return { text: `Faltan ${days} días`, stage: 'nyc' };
-  }
-  if (now < t('2026-10-30T06:00:00-04:00')) return { text: 'Volando a Nueva York', stage: 'nyc' };
-  if (now < t('2026-11-06T19:29:00-05:00')) {
-    const day = Math.min(8, Math.floor((now - t('2026-10-30T00:00:00-04:00')) / 86400000) + 1);
-    return { text: `Día ${day} de 8 en Nueva York`, stage: 'nyc' };
+    const days = calendarDaysBetween(todayKey(), '2026-11-06');
+    if (days <= 0) return { text: 'Hoy viajás a Acapulco', stage: 'aca' };
+    if (days === 1) return { text: 'Mañana viajás a Acapulco', stage: 'aca' };
+    return { text: `Faltan ${days} días`, stage: 'aca' };
   }
   if (now < t('2026-11-07T14:28:00-06:00')) return { text: 'Rumbo a Acapulco', stage: 'aca' };
   if (now < t('2026-11-13T19:06:00-06:00')) {
@@ -444,7 +365,7 @@ function phase(now) {
     return { text: `Día ${day} de 7 en Acapulco`, stage: 'aca' };
   }
   if (now < t(TRIP.end)) return { text: 'Volviendo a Buenos Aires', stage: 'aca' };
-  return { text: 'Viaje terminado', stage: 'nyc' };
+  return { text: 'Viaje terminado', stage: 'aca' };
 }
 
 function renderHero(now) {
@@ -503,9 +424,9 @@ function totalsByCurrency() {
 function renderStats(now) {
   let tripStat;
   if (now < Date.parse(TRIP.start)) {
-    tripStat = { value: Math.max(0, calendarDaysBetween(todayKey(), '2026-10-29')), label: 'Días para salir' };
+    tripStat = { value: Math.max(0, calendarDaysBetween(todayKey(), '2026-11-06')), label: 'Días para salir' };
   } else if (now <= Date.parse(TRIP.end)) {
-    const day = Math.min(TRIP.totalDays, calendarDaysBetween('2026-10-29', todayKey()) + 1);
+    const day = Math.min(TRIP.totalDays, calendarDaysBetween('2026-11-06', todayKey()) + 1);
     tripStat = { value: `${day} de ${TRIP.totalDays}`, label: 'Día del viaje' };
   } else {
     tripStat = { value: TRIP.totalDays, label: 'Días de viaje' };
@@ -679,63 +600,8 @@ function ticket(f) {
     </article>`;
 }
 
-function hotelCard(now) {
-  const h = HOTEL;
-  const freeCancel = now <= Date.parse(h.freeCancelUntil);
-  const cancel = freeCancel
-    ? `Gratis hasta el miércoles 28/10 a las 23:59, hora de Nueva York. Después cuesta ${h.cancelFee}.`
-    : `Ya no es gratis: cancelar cuesta ${h.cancelFee}.`;
-  return `
-    <article class="card stay">
-      <div class="ticket-head" style="padding:0">
-        <p class="stay-name">${esc(h.name)}</p>
-      </div>
-      <div class="stay-links">
-        <a href="${LINKS.hotelMap}" ${externalAttrs()}>${icon('map-pin')}<span>${esc(h.address)}</span></a>
-        <a href="tel:${h.phone.replace(/[^+\d]/g, '')}">${icon('phone')}<span>${esc(h.phone)}</span></a>
-      </div>
-      <div class="stay-dates">
-        <div><span>Check‑in</span><strong>${h.checkInDay}</strong><em>${h.checkInHours}</em></div>
-        <div><span>Check‑out</span><strong>${h.checkOutDay}</strong><em>${h.checkOutHours}</em></div>
-      </div>
-      <dl class="facts">
-        <div><dt>Habitación</dt><dd>${esc(h.room)}</dd></div>
-        <div><dt>Comidas</dt><dd>${esc(h.meals)}</dd></div>
-        <div><dt>A nombre de</dt><dd>${esc(h.guestName)}</dd></div>
-        <div><dt>Pago</dt><dd>${esc(h.payment)}</dd></div>
-        <div><dt>Cancelación</dt><dd>${esc(cancel)}</dd></div>
-      </dl>
-      <div class="chip-row">${codeChip('Booking', h.confirmation)}${codeChip('PIN', h.pin)}</div>
-      <p class="note">${icon('info')}<span>En el check‑in piden documento y tarjeta de crédito.</span></p>
-    </article>`;
-}
-
 function renderTrip(now) {
   const stations = [
-    { stage: 'nyc', at: FLIGHTS.ida.segments[0].dep, title: 'Salís de Ezeiza', body: () => ticket(FLIGHTS.ida) },
-    {
-      stage: 'nyc', at: '2026-10-30T06:00:00-04:00', title: 'Llegás a JFK',
-      body: () => `
-        <div class="card">
-          <p>Al hotel en subte, pagando con OMNY: acercás la tarjeta contactless o el celular al molinete.</p>
-          <p class="note">${icon('info')}<span>El check‑in es a las 15:00. Pedí en recepción que te guarden las valijas mientras tanto.</span></p>
-          <div class="button-row">
-            <a class="btn btn-secondary btn-small" href="${LINKS.jfkToHotel}" ${externalAttrs()}>${icon('route')}Ruta desde JFK</a>
-            <a class="btn btn-secondary btn-small" href="${LINKS.omny}" ${externalAttrs()}>${icon('train-front')}Cómo usar OMNY</a>
-          </div>
-        </div>`
-    },
-    { stage: 'nyc', at: '2026-10-30T15:00:00-04:00', title: 'Check‑in en el hotel', body: () => hotelCard(now) },
-    {
-      stage: 'nyc', at: '2026-11-06T11:00:00-05:00', title: 'Check‑out del hotel',
-      body: () => `
-        <div class="card">
-          <p>Tenés hasta las 11:00. El vuelo a Acapulco sale a las 19:29 de la Terminal 8 de JFK.</p>
-          <div class="button-row">
-            <a class="btn btn-secondary btn-small" href="${LINKS.hotelToJfk}" ${externalAttrs()}>${icon('route')}Ruta del hotel a JFK</a>
-          </div>
-        </div>`
-    },
     { stage: 'aca', at: FLIGHTS.aca.segments[0].dep, title: 'Vuelo a Acapulco', body: () => ticket(FLIGHTS.aca) },
     { stage: 'aca', at: '2026-11-07T14:28:00-06:00', title: 'Llegás a Acapulco', body: () => '<p class="station-text">Te quedás en lo de un amigo.</p>' },
     { stage: 'aca', at: FLIGHTS.vuelta.segments[0].dep, title: 'Vuelo de vuelta a Buenos Aires', body: () => ticket(FLIGHTS.vuelta) },
@@ -745,7 +611,6 @@ function renderTrip(now) {
   const nextIndex = stations.findIndex((s) => Date.parse(s.at) > now);
 
   const stages = [
-    { key: 'nyc', bullet: 'N', title: 'Nueva York', sub: 'Del 29 de octubre al 6 de noviembre' },
     { key: 'aca', bullet: 'A', title: 'Acapulco', sub: 'Del 6 al 14 de noviembre, con la vuelta a casa' }
   ];
 
@@ -782,7 +647,7 @@ function renderTrip(now) {
 
   $('tripLine').innerHTML = `${html}
     <div class="trip-footer">
-      <p class="hint">Los tres vuelos se compraron en eDreams. Todos los horarios están en la hora local de cada aeropuerto.</p>
+      <p class="hint">Los vuelos se compraron en eDreams. Todos los horarios están en la hora local de cada aeropuerto.</p>
       ${codeChip('eDreams', TRIP.agencyRef)}
     </div>`;
 }
@@ -1209,13 +1074,6 @@ function renderAll() {
 function bindEvents() {
   document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', () => setScreen(tab.dataset.target));
-  });
-
-  $('weatherTabs').addEventListener('click', (e) => {
-    const b = e.target.closest('button[data-place]');
-    if (!b) return;
-    ui.weatherPlace = b.dataset.place;
-    renderWeather();
   });
 
   $('placeFilter').addEventListener('click', (e) => {
