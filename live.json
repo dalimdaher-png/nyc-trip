@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-07T03:20:00-05:00",
-  "source": "Mails de American (demora, cambio de puerta y pase de abordar, 6 nov)",
+  "updated": "2026-11-07T06:57:00-06:00",
+  "source": "Mails de American (demora, cambio de puerta, 6 nov) y pase de abordar del AA 3740 (7 nov)",
   "flights": {
     "AA 1892": {
       "status": "delayed",
@@ -14,8 +14,13 @@
       "note": "Demorado por espera de tripulación tras una demora anterior."
     },
     "AA 3740": {
-      "status": "scheduled",
-      "note": "Sale 11:23 de DFW. Puerta y asiento todavía sin confirmar."
+      "status": "ontime",
+      "terminal": "B",
+      "gate": "B44",
+      "seat": "13F",
+      "group": "9",
+      "checkedIn": true,
+      "note": "Sale 11:23 de DFW. Abordaje 10:53. Basic Economy."
     },
     "AM 307": {
       "status": "scheduled"
