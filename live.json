@@ -1,7 +1,18 @@
 {
-  "updated": "2026-11-07T00:25:00-05:00",
-  "source": "Mails de American (check-in y pase de abordar, 6 nov)",
+  "updated": "2026-11-07T03:20:00-05:00",
+  "source": "Mails de American (demora, cambio de puerta y pase de abordar, 6 nov)",
   "flights": {
+    "AA 1892": {
+      "status": "delayed",
+      "dep": "2026-11-06T20:55:00-05:00",
+      "arr": "2026-11-06T23:56:00-06:00",
+      "terminal": "8",
+      "gate": "39",
+      "gateWas": "1",
+      "seat": "14C",
+      "checkedIn": true,
+      "note": "Demorado por espera de tripulación tras una demora anterior."
+    },
     "AA 3740": {
       "status": "scheduled",
       "note": "Sale 11:23 de DFW. Puerta y asiento todavía sin confirmar."
