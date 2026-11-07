@@ -40,14 +40,6 @@ const FLIGHTS = {
     link: LINKS.american,
     segments: [
       {
-        num: 'AA 1892',
-        op: '',
-        from: { code: 'JFK', city: 'Nueva York' },
-        to: { code: 'DFW', city: 'Dallas' },
-        dep: '2026-11-06T19:29:00-05:00',
-        arr: '2026-11-06T22:46:00-06:00'
-      },
-      {
         num: 'AA 3740',
         op: 'Operado por American Eagle',
         from: { code: 'DFW', city: 'Dallas' },
@@ -98,10 +90,8 @@ function buildMilestones() {
   const A = FLIGHTS.aca.segments;
   const V = FLIGHTS.vuelta.segments;
   return [
-    { at: '2026-11-05T19:29:00-05:00', place: 'Nueva York', title: 'Se habilita el check‑in de American', detail: 'En la app de American, 24 h antes del vuelo. Reserva DTKXEH.', link: LINKS.american, linkLabel: 'Ir a American' },
-    { at: A[0].dep, flight: A[0], place: 'Nueva York', title: 'Vuelo a Acapulco', detail: `${A[0].num} sale de JFK a las ${stamp(A[0].dep).hm}. Pasás la noche en Dallas.` },
-    { at: A[1].dep, flight: A[1], place: 'Dallas', title: 'Conexión en Dallas', detail: `${A[1].num} sale a las ${stamp(A[1].dep).hm} hacia Acapulco.` },
-    { at: A[1].arr, place: 'Acapulco', title: 'Llegada a Acapulco', detail: `Aterrizás a las ${stamp(A[1].arr).hm}. Te quedás en lo de un amigo.` },
+    { at: A[0].dep, flight: A[0], place: 'Dallas', title: 'Conexión en Dallas', detail: `${A[0].num} sale a las ${stamp(A[0].dep).hm} hacia Acapulco.` },
+    { at: A[0].arr, place: 'Acapulco', title: 'Llegada a Acapulco', detail: `Aterrizás a las ${stamp(A[0].arr).hm}. Te quedás en lo de un amigo.` },
     { at: V[0].dep, flight: V[0], place: 'Acapulco', title: 'Vuelo a Buenos Aires', detail: `${V[0].num} sale a las ${stamp(V[0].dep).hm}. Pasás la noche en Ciudad de México.` },
     { at: V[1].dep, flight: V[1], place: 'Ciudad de México', title: 'Conexión en Ciudad de México', detail: `${V[1].num} sale a las ${stamp(V[1].dep).hm} hacia Ezeiza.` },
     { at: V[1].arr, place: 'Buenos Aires', title: 'Llegada a Buenos Aires', detail: `Aterrizás en Ezeiza a las ${stamp(V[1].arr).hm}.` }
@@ -293,7 +283,7 @@ function phase(now) {
     if (days === 1) return { text: 'Mañana viajás a Acapulco', stage: 'aca' };
     return { text: `Faltan ${days} días`, stage: 'aca' };
   }
-  if (now < t(FLIGHTS.aca.segments[1].arr)) return { text: 'Rumbo a Acapulco', stage: 'aca' };
+  if (now < t(FLIGHTS.aca.segments[0].arr)) return { text: 'Rumbo a Acapulco', stage: 'aca' };
   if (now < t(FLIGHTS.vuelta.segments[0].dep)) {
     const day = Math.min(7, Math.floor((now - t('2026-11-07T00:00:00-06:00')) / 86400000) + 1);
     return { text: `Día ${day} de 7 en Acapulco`, stage: 'aca' };
@@ -575,7 +565,7 @@ function ticket(f) {
 function renderTrip(now) {
   const stations = [
     { stage: 'aca', at: FLIGHTS.aca.segments[0].dep, title: 'Vuelo a Acapulco', body: () => ticket(FLIGHTS.aca) },
-    { stage: 'aca', at: FLIGHTS.aca.segments[1].arr, title: 'Llegás a Acapulco', body: () => '<p class="station-text">Te quedás en lo de un amigo.</p>' },
+    { stage: 'aca', at: FLIGHTS.aca.segments[0].arr, title: 'Llegás a Acapulco', body: () => '<p class="station-text">Te quedás en lo de un amigo.</p>' },
     { stage: 'aca', at: FLIGHTS.vuelta.segments[0].dep, title: 'Vuelo de vuelta a Buenos Aires', body: () => ticket(FLIGHTS.vuelta) },
     { stage: 'aca', at: TRIP.end, title: 'Llegás a Ezeiza', terminal: true, body: () => '<p class="station-text">Fin del viaje.</p>' }
   ];
